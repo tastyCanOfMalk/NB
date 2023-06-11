@@ -1,0 +1,362 @@
+---
+title: "Mortality EDA"
+subtitle: "NurseBridge Project"
+author: "Edward Yu"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+      theme: readable
+      highlight: tango
+      toc: true
+      toc_float:
+        collapsed: true
+      toc_depth: 4
+      df_print: paged
+      code_folding: hide
+      fig_width: 8
+      fig_height: 6
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo    = TRUE,
+                      error   = FALSE,
+                      message = FALSE,
+                      warning = FALSE)
+
+library(tidyverse)
+library(janitor)
+library(DT)
+library(plotly) 
+library(scales)
+theme_set(theme_minimal())
+rm(list = ls())
+
+# 2021 population for comparison
+TX_pop_2021 <- read_csv("data/TX_2021_total_pop.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(county = as.factor(gsub(" County", "",gsub(", TX", "", county))),
+         county_code = as.factor(county_code),
+         crude_rate_per_100k = as.numeric(gsub("Unreliable", NA, crude_rate)),
+         annual_deaths = as.numeric(gsub("Suppressed", NA, deaths))) %>% 
+  select(county_code, annual_deaths, population, crude_rate_per_100k) %>% 
+  drop_na()
+
+# TX_day <- read_csv("data/TX_2021_deaths_weekday.csv") %>% 
+#   janitor::clean_names() %>% 
+#   mutate(month = as.factor(gsub("2021/", "", month_code)),
+#          month = month(as.numeric(month), label=TRUE),
+#          county = as.factor(gsub(" County", "",gsub(", TX", "", county))),
+#          county_code = as.factor(county_code),
+#          weekday = as.factor(weekday),
+#          daily_deaths = as.numeric(gsub("Suppressed", NA, deaths))) %>% 
+#   select(county, county_code, month, weekday, daily_deaths) %>% 
+#   filter(weekday != "Unknown")
+
+setup_data <- function(year, state){
+
+  path_pop <- paste0("data/", state, "_", year, "_total_pop.csv")
+  path_day <- paste0("data/", state, "_", year, "_deaths_weekday.csv")
+  
+  temp_pop <- read_csv(path_pop) %>% 
+    janitor::clean_names() %>% 
+    mutate(county = as.factor(gsub(" County", "",gsub(", TX", "", county))),
+           county_code = as.factor(county_code),
+           # crude_rate_per_100k = as.numeric(gsub("Unreliable", NA, crude_rate)),
+           # crude_rate_per_100k = crude_rate,
+           # annual_deaths = as.numeric(gsub("Suppressed", NA, deaths))
+           annual_county_deaths = deaths,
+           annual_county_population = population
+           ) %>% 
+    select(county_code, annual_county_deaths, annual_county_population) %>%
+    drop_na()
+  
+  month_gsub = paste0(year,"/")
+  temp_day <- read_csv(path_day) %>% 
+    janitor::clean_names() %>% 
+    mutate(state = as.factor(state),
+           year = as.numeric(year),
+           month = gsub(month_gsub, "", month_code),
+           month = month(as.numeric(month), label=TRUE),
+           county = as.factor(gsub(" County", "",gsub(", TX", "", county))),
+           county_code = as.factor(county_code),
+           weekday = as.factor(weekday),
+           # daily_deaths = as.numeric(gsub("Suppressed", NA, deaths)),
+           daily_county_deaths = deaths
+           ) %>% 
+    select(state, county, county_code, year, month, weekday, daily_county_deaths)
+    # filter(weekday != "Unknown")
+  
+  temp_all <- temp_day %>% left_join(temp_pop, by="county_code")
+  
+  return(temp_all)
+}
+
+join_data <- function(state){
+  
+  tmp_2018 <- setup_data(year = "2018", state = state)
+  tmp_2019 <- setup_data(year = "2019", state = state)
+  tmp_2020 <- setup_data(year = "2020", state = state)
+  tmp_2021 <- setup_data(year = "2021", state = state)
+  
+  tmp_all <-  
+    bind_rows(
+      tmp_2018, 
+      tmp_2019,
+      tmp_2020,
+      tmp_2021
+    )
+
+  tmp_all$weekday <- factor(tmp_all$weekday, levels = c("Sunday", "Monday", 
+    "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+  
+  return(tmp_all)
+}
+
+TX_all <- join_data(state = "TX")
+```
+
+# Intro
+
+NurseBridge (NB) wants to create a data driven predictive model allowing rural healthcare systems to make more informed decisions regarding compensation offerings at the most granular unit of time possible.
+
+# Data
+
+[Goal is to use this data to categorize risk of death by day of the week on a county level.]{.underline}
+
+[*Underlying cause of death 2018-21*](https://wonder.cdc.gov/ucd-icd10-expanded.html)
+
+-   Data was pulled from the CDC website by grouping by County, Month, and Weekday.
+    -   Additional filtering/grouping was avoided (when additional features were added, such as place or cause of death, results were missing too many values).
+-   Weekdays with value "Unknown" were removed.
+-   *Suppressed* death counts were added via the CDC to protect privacy, and mask any death values number 1-9.
+    -   These values were replaced as NA values
+-   *Unreliable* was appended to calculated crude-death-rates if total deaths were below 20.
+
+## Structure
+
+Two datasets were joined, one listing month and weekday and their associated deaths by county; the other listing total population and total deaths by county. Crude death rate was also included and is essentially annual deaths per population.
+
+```{r}
+TX_all %>% glimpse()
+```
+
+## Note
+
+Due to suppressed data, any annual death rates calculated from the daily measure do not equal death rates from the summarised data. This is evidenced by taking the sum of all `daily_deaths` per `county` and comparing to reported `annual_deaths` in the dataset. Note no calculated deaths are greater than reported deaths, as suppressed data is not summed.
+
+A potentially interesting measure emerges, that there are some counties which never experience a day with less than 9 deaths (`annual_deaths == calc_annual_deaths`)
+
+```{r}
+## compare reported annual deaths to calculated annual deaths
+compare <- 
+  left_join(TX_pop_2021,
+            TX_all %>% 
+              filter(year == 2021) %>% 
+              select(county_code, daily_county_deaths) %>% 
+              group_by(county_code) %>% 
+              mutate(daily_county_deaths = as.numeric(daily_county_deaths)) %>% 
+              summarise(calc_annual_deaths = sum(daily_county_deaths, na.rm = TRUE))
+            ) %>% 
+  select(county_code, annual_deaths, calc_annual_deaths) %>% 
+  mutate(lessOrEqual = ifelse(calc_annual_deaths <= annual_deaths, TRUE, FALSE))
+  
+comparison <- compare %>% 
+  arrange(-annual_deaths)
+
+DT::datatable(comparison)
+```
+
+# EDA
+
+## Total deaths and population
+
+How have total deaths in the state trended over the years compared to population?
+
+```{r}
+TX_all %>%
+  select(county, year, annual_county_population) %>% 
+  distinct() %>% 
+  group_by(year) %>% 
+  summarise(TX_population = sum(annual_county_population)) %>% 
+  mutate(year = as.factor(year)) %>% 
+  left_join(
+    TX_all %>%
+      select(county, year, annual_county_deaths) %>% 
+      distinct() %>% 
+      group_by(year) %>% 
+      summarise(total_deaths = sum(as.numeric(annual_county_deaths), na.rm = TRUE)) %>% 
+      mutate(year = as.factor(year))
+  ) %>% 
+  pivot_longer(
+    cols = TX_population:total_deaths) %>% 
+  ggplot(aes(x=year, y=value, group=name, fill=name)) +
+  # geom_col(position="dodge")
+  geom_point()+
+  geom_line()+
+  facet_wrap(~name, scales="free_y") + 
+  scale_y_continuous(labels=comma)
+```
+
+## Annual patterns
+
+Do certain months show patterns year after year?
+
+```{r}
+gg_1 <- 
+  TX_all %>% 
+    mutate_if(is.character, as.numeric) %>% 
+    mutate(year = as.factor(year)) %>% 
+    group_by(year, month) %>% 
+    summarise(deaths = sum(daily_county_deaths, na.rm = TRUE)) %>% 
+    # ungroup() %>% 
+    ggplot(aes(x=month, y=deaths, color=year, group=year)) +
+    geom_point() + 
+    geom_line(alpha=.8) + 
+    labs(
+      title = "Deaths over time"
+    ) + 
+    scale_y_continuous(labels = comma) + 
+  xlab("Month") +
+  ylab("Deaths")
+
+ggplotly(gg_1)
+```
+
+## Annual adjusted
+
+Every year the deaths increase, what about after normalizing against population?
+
+```{r}
+# get TX population by year
+TX_pop <- TX_all %>%
+  select(county, year, annual_county_population) %>% 
+  distinct() %>% 
+  group_by(year) %>% 
+  summarise(TX_population = sum(annual_county_population)) %>% 
+  mutate(year = as.factor(year))
+
+gg_2 <- TX_all %>% 
+  mutate_if(is.character, as.numeric) %>% 
+  mutate(year = as.factor(year)) %>% 
+  group_by(year, month) %>% 
+  summarise(deaths = sum(daily_county_deaths, na.rm = TRUE)) %>% 
+  left_join(TX_pop) %>%
+  mutate(pct_pop_deaths = deaths/TX_population) %>% 
+  ggplot(aes(x=month, y=pct_pop_deaths, color=year, group=year)) +
+  geom_point() + 
+  geom_line(alpha=.8) + 
+  labs(
+    title = "Deaths over time",
+    subtitle = "Normalized for population"
+  ) + 
+  scale_y_continuous(labels = percent) + 
+  xlab("Month") +
+  ylab("Deaths (percent of state population")
+ggplotly(gg_2)
+
+```
+
+## Covid spike {.tabset .tabset-fade .tabset-pills}
+
+### Standard
+
+Are the spikes seasonal or due to covid?
+
+```{r}
+
+## visualize covid spike ----
+gg_3 <- TX_all %>% 
+  mutate_if(is.character, as.numeric) %>% 
+  mutate(year = as.factor(year)) %>%
+  group_by(year, month) %>% 
+  summarise(deaths = sum(daily_county_deaths, na.rm = TRUE)) %>% 
+  left_join(TX_pop) %>%
+  mutate(
+    pct_pop_deaths = deaths/TX_population,
+    date = ymd(paste0(year,"-", month, "-01"))
+    ) %>% 
+  ggplot(aes(x=date, y=pct_pop_deaths, color=year)) +
+  geom_point()+
+  geom_line(alpha=.8)+
+  labs(
+    title = "Deaths over time",
+    subtitle = "Normalized for population"
+  ) + 
+  scale_y_continuous(labels = percent) + 
+  scale_x_date(date_breaks = "4 months", date_labels = "%Y-%m") + 
+  xlab("Month") +
+  ylab("Deaths (percent of state population")+
+  geom_rect(aes(xmin=ymd("2020-01-01"), xmax=ymd("2021-12-01"), ymin=0, ymax=.001), alpha=.005, fill='orange', color=NA) +
+  theme(legend.position = "none")  
+gg_3
+
+```
+
+### Plotly
+
+```{r}
+ggplotly(gg_3)
+```
+
+## Monthly patterns
+
+If we look at how deaths have trended over time, on a per month basis, can we see any useful patterns at all?
+
+```{r}
+
+TX_all %>% 
+  mutate_if(is.character, as.numeric) %>% 
+  mutate(year = as.factor(year)) %>%
+  group_by(year, month) %>% 
+  summarise(deaths = sum(daily_county_deaths, na.rm = TRUE)) %>% 
+  left_join(TX_pop) %>%
+  mutate(
+    pct_pop_deaths = deaths/TX_population,
+    date = ymd(paste0(year,"-", month, "-01"))
+  ) %>% 
+  ggplot(aes(x=year, y=deaths))+
+  geom_point()+
+  geom_line(group=1,alpha=.4)+
+  facet_wrap(~month)
+
+```
+
+## Weekday
+
+Are certain weekdays more deadly?
+
+```{r}
+TX_all %>% 
+  mutate_if(is.character, as.numeric) %>% 
+  select(county, year, month, weekday, daily_county_deaths) %>% 
+  group_by(weekday) %>% 
+  summarise(total_deaths = sum(daily_county_deaths, na.rm = TRUE)) %>% 
+  ggplot(aes(x=weekday, y=total_deaths))+
+  geom_point()+
+  geom_line(group=1)+
+  scale_y_continuous(labels=comma)
+```
+
+And does this pattern hold true year by year?
+
+```{r}
+TX_all %>% 
+  mutate_if(is.character, as.numeric) %>% 
+  select(county, year, month, weekday, daily_county_deaths) %>% 
+  group_by(year, weekday) %>% 
+  summarise(total_deaths = sum(daily_county_deaths, na.rm = TRUE)) %>% 
+  ggplot(aes(x=weekday, y=total_deaths))+
+  geom_point()+
+  geom_line(group=1)+
+  scale_y_continuous(labels=comma)+
+  facet_wrap(~year, scale="free_y", ncol=1)
+```
+
+
+
+##
+
+* Filter out COVID `U07.1 (COVID-19)`
+* Maybe filter for in hospital
+* Send data in `County | Month, year | Deaths` format
+* Send data in `County | Weekday, Month, year | Deaths` format

@@ -1,0 +1,291 @@
+Notes,County,County Code,Deaths,Population,Crude Rate
+,"Anderson County, TX",48001,668,57735,1157
+,"Andrews County, TX",48003,125,18705,668.3
+,"Angelina County, TX",48005,909,86715,1048.3
+,"Aransas County, TX",48007,361,23510,1535.5
+,"Archer County, TX",48009,99,8553,1157.5
+,"Armstrong County, TX",48011,32,1887,1695.8
+,"Atascosa County, TX",48013,437,51153,854.3
+,"Austin County, TX",48015,302,30032,1005.6
+,"Bailey County, TX",48017,62,7000,885.7
+,"Bandera County, TX",48019,285,23112,1233.1
+,"Bastrop County, TX",48021,685,88723,772.1
+,"Baylor County, TX",48023,64,3509,1823.9
+,"Bee County, TX",48025,268,32565,823
+,"Bell County, TX",48027,2510,362924,691.6
+,"Bexar County, TX",48029,13945,2003554,696
+,"Blanco County, TX",48031,118,11931,989
+,"Borden County, TX",48033,11,654,Unreliable
+,"Bosque County, TX",48035,262,18685,1402.2
+,"Bowie County, TX",48037,1082,93245,1160.4
+,"Brazoria County, TX",48039,2421,374264,646.9
+,"Brazos County, TX",48041,1129,229211,492.6
+,"Brewster County, TX",48043,92,9203,999.7
+,"Briscoe County, TX",48045,19,1546,Unreliable
+,"Brooks County, TX",48047,91,7093,1283
+,"Brown County, TX",48049,531,37864,1402.4
+,"Burleson County, TX",48051,241,18443,1306.7
+,"Burnet County, TX",48053,558,48155,1158.8
+,"Caldwell County, TX",48055,386,43664,884
+,"Calhoun County, TX",48057,204,21290,958.2
+,"Callahan County, TX",48059,169,13943,1212.1
+,"Cameron County, TX",48061,2782,423163,657.4
+,"Camp County, TX",48063,146,13094,1115
+,"Carson County, TX",48065,54,5926,911.2
+,"Cass County, TX",48067,417,30026,1388.8
+,"Castro County, TX",48069,59,7530,783.5
+,"Chambers County, TX",48071,294,43837,670.7
+,"Cherokee County, TX",48073,553,52646,1050.4
+,"Childress County, TX",48075,95,7306,1300.3
+,"Clay County, TX",48077,145,10471,1384.8
+,"Cochran County, TX",48079,31,2853,1086.6
+,"Coke County, TX",48081,51,3387,1505.8
+,"Coleman County, TX",48083,162,8175,1981.7
+,"Collin County, TX",48085,4869,1034730,470.6
+,"Collingsworth County, TX",48087,36,2920,1232.9
+,"Colorado County, TX",48089,268,21493,1246.9
+,"Comal County, TX",48091,1321,156209,845.7
+,"Comanche County, TX",48093,191,13635,1400.8
+,"Concho County, TX",48095,37,2726,1357.3
+,"Cooke County, TX",48097,454,41257,1100.4
+,"Coryell County, TX",48099,533,75951,701.8
+,"Cottle County, TX",48101,14,1398,Unreliable
+,"Crane County, TX",48103,46,4797,958.9
+,"Crockett County, TX",48105,41,3464,1183.6
+,"Crosby County, TX",48107,66,5737,1150.4
+,"Culberson County, TX",48109,26,2171,1197.6
+,"Dallam County, TX",48111,49,7287,672.4
+,"Dallas County, TX",48113,16531,2635516,627.2
+,"Dawson County, TX",48115,128,12728,1005.7
+,"Deaf Smith County, TX",48117,156,18546,841.2
+,"Delta County, TX",48119,54,5331,1012.9
+,"Denton County, TX",48121,4124,887207,464.8
+,"DeWitt County, TX",48123,271,20160,1344.2
+,"Dickens County, TX",48125,29,2211,1311.6
+,"Dimmit County, TX",48127,103,10124,1017.4
+,"Donley County, TX",48129,56,3278,1708.4
+,"Duval County, TX",48131,118,11157,1057.6
+,"Eastland County, TX",48133,277,18360,1508.7
+,"Ector County, TX",48135,1275,166223,767
+,"Edwards County, TX",48137,25,1932,1294
+,"Ellis County, TX",48139,1314,184826,710.9
+,"El Paso County, TX",48141,5724,839238,682
+,"Erath County, TX",48143,315,42698,737.7
+,"Falls County, TX",48145,182,17297,1052.2
+,"Fannin County, TX",48147,444,35514,1250.2
+,"Fayette County, TX",48149,296,25346,1167.8
+,"Fisher County, TX",48151,46,3830,1201
+,"Floyd County, TX",48153,67,5712,1173
+,"Foard County, TX",48155,21,1155,1818.2
+,"Fort Bend County, TX",48157,3608,811688,444.5
+,"Franklin County, TX",48159,119,10725,1109.6
+,"Freestone County, TX",48161,232,19717,1176.6
+,"Frio County, TX",48163,146,20306,719
+,"Gaines County, TX",48165,131,21492,609.5
+,"Galveston County, TX",48167,2850,342139,833
+,"Garza County, TX",48169,44,6229,706.4
+,"Gillespie County, TX",48171,340,26988,1259.8
+,"Glasscock County, TX",48173,Suppressed,1409,Suppressed
+,"Goliad County, TX",48175,76,7658,992.4
+,"Gonzales County, TX",48177,224,20837,1075
+,"Gray County, TX",48179,265,21886,1210.8
+,"Grayson County, TX",48181,1473,136212,1081.4
+,"Gregg County, TX",48183,1365,123945,1101.3
+,"Grimes County, TX",48185,308,28880,1066.5
+,"Guadalupe County, TX",48187,1197,166847,717.4
+,"Hale County, TX",48189,333,33406,996.8
+,"Hall County, TX",48191,46,2964,1552
+,"Hamilton County, TX",48193,136,8461,1607.4
+,"Hansford County, TX",48195,52,5399,963.1
+,"Hardeman County, TX",48197,47,3933,1195
+,"Hardin County, TX",48199,625,57602,1085
+,"Harris County, TX",48201,26730,4713325,567.1
+,"Harrison County, TX",48203,663,66553,996.2
+,"Hartley County, TX",48205,34,5576,609.8
+,"Haskell County, TX",48207,71,5658,1254.9
+,"Hays County, TX",48209,1182,230191,513.5
+,"Hemphill County, TX",48211,34,3819,890.3
+,"Henderson County, TX",48213,1139,82737,1376.7
+,"Hidalgo County, TX",48215,4763,868707,548.3
+,"Hill County, TX",48217,468,36649,1277
+,"Hockley County, TX",48219,223,23021,968.7
+,"Hood County, TX",48221,745,61643,1208.6
+,"Hopkins County, TX",48223,436,37084,1175.7
+,"Houston County, TX",48225,273,22968,1188.6
+,"Howard County, TX",48227,337,36664,919.2
+,"Hudspeth County, TX",48229,33,4886,675.4
+,"Hunt County, TX",48231,973,98594,986.9
+,"Hutchinson County, TX",48233,270,20938,1289.5
+,"Irion County, TX",48235,15,1536,Unreliable
+,"Jack County, TX",48237,101,8935,1130.4
+,"Jackson County, TX",48239,146,14760,989.2
+,"Jasper County, TX",48241,454,35529,1277.8
+,"Jeff Davis County, TX",48243,29,2274,1275.3
+,"Jefferson County, TX",48245,2465,251565,979.9
+,"Jim Hogg County, TX",48247,51,5200,980.8
+,"Jim Wells County, TX",48249,433,40482,1069.6
+,"Johnson County, TX",48251,1543,175817,877.6
+,"Jones County, TX",48253,171,20083,851.5
+,"Karnes County, TX",48255,164,15601,1051.2
+,"Kaufman County, TX",48257,1102,136154,809.4
+,"Kendall County, TX",48259,388,47431,818
+,"Kenedy County, TX",48261,Suppressed,404,Suppressed
+,"Kent County, TX",48263,Suppressed,762,Suppressed
+,"Kerr County, TX",48265,736,52600,1399.2
+,"Kimble County, TX",48267,53,4337,1222
+,"King County, TX",48269,Suppressed,272,Suppressed
+,"Kinney County, TX",48271,42,3667,1145.4
+,"Kleberg County, TX",48273,315,30680,1026.7
+,"Knox County, TX",48275,44,3664,1200.9
+,"Lamar County, TX",48277,647,49859,1297.7
+,"Lamb County, TX",48279,161,12893,1248.7
+,"Lampasas County, TX",48281,239,21428,1115.4
+,"La Salle County, TX",48283,49,7520,651.6
+,"Lavaca County, TX",48285,246,20154,1220.6
+,"Lee County, TX",48287,161,17239,933.9
+,"Leon County, TX",48289,230,17404,1321.5
+,"Liberty County, TX",48291,827,88219,937.4
+,"Limestone County, TX",48293,290,23437,1237.4
+,"Lipscomb County, TX",48295,28,3233,866.1
+,"Live Oak County, TX",48297,112,12207,917.5
+,"Llano County, TX",48299,359,21795,1647.2
+,"Loving County, TX",48301,Suppressed,169,Suppressed
+,"Lubbock County, TX",48303,2632,310569,847.5
+,"Lynn County, TX",48305,65,5951,1092.3
+,"McCulloch County, TX",48307,123,7984,1540.6
+,"McLennan County, TX",48309,2242,256623,873.7
+,"McMullen County, TX",48311,Suppressed,743,Suppressed
+,"Madison County, TX",48313,140,14284,980.1
+,"Marion County, TX",48315,155,9854,1573
+,"Martin County, TX",48317,46,5771,797.1
+,"Mason County, TX",48319,51,4274,1193.3
+,"Matagorda County, TX",48321,422,36643,1151.7
+,"Maverick County, TX",48323,412,58722,701.6
+,"Medina County, TX",48325,488,51584,946
+,"Menard County, TX",48327,31,2138,1450
+,"Midland County, TX",48329,1185,176832,670.1
+,"Milam County, TX",48331,286,24823,1152.2
+,"Mills County, TX",48333,89,4873,1826.4
+,"Mitchell County, TX",48335,85,8545,994.7
+,"Montague County, TX",48337,318,19818,1604.6
+,"Montgomery County, TX",48339,4054,607391,667.4
+,"Moore County, TX",48341,140,20940,668.6
+,"Morris County, TX",48343,191,12388,1541.8
+,"Motley County, TX",48345,27,1200,2250
+,"Nacogdoches County, TX",48347,613,65204,940.1
+,"Navarro County, TX",48349,586,50113,1169.4
+,"Newton County, TX",48351,151,13595,1110.7
+,"Nolan County, TX",48353,208,14714,1413.6
+,"Nueces County, TX",48355,3013,362294,831.6
+,"Ochiltree County, TX",48357,59,9836,599.8
+,"Oldham County, TX",48359,17,2112,Unreliable
+,"Orange County, TX",48361,936,83396,1122.4
+,"Palo Pinto County, TX",48363,337,29189,1154.5
+,"Panola County, TX",48365,280,23194,1207.2
+,"Parker County, TX",48367,1292,142878,904.3
+,"Parmer County, TX",48369,76,9605,791.3
+,"Pecos County, TX",48371,112,15823,707.8
+,"Polk County, TX",48373,666,51353,1296.9
+,"Potter County, TX",48375,1369,117415,1165.9
+,"Presidio County, TX",48377,47,6704,701.1
+,"Rains County, TX",48379,138,12514,1102.8
+,"Randall County, TX",48381,1121,137713,814
+,"Reagan County, TX",48383,22,3849,571.6
+,"Real County, TX",48385,46,3452,1332.6
+,"Red River County, TX",48387,214,12023,1779.9
+,"Reeves County, TX",48389,124,15976,776.2
+,"Refugio County, TX",48391,80,6948,1151.4
+,"Roberts County, TX",48393,11,854,Unreliable
+,"Robertson County, TX",48395,187,17074,1095.2
+,"Rockwall County, TX",48397,636,104915,606.2
+,"Runnels County, TX",48399,155,10264,1510.1
+,"Rusk County, TX",48401,557,54406,1023.8
+,"Sabine County, TX",48403,166,10542,1574.7
+,"San Augustine County, TX",48405,136,8237,1651.1
+,"San Jacinto County, TX",48407,342,28859,1185.1
+,"San Patricio County, TX",48409,637,66730,954.6
+,"San Saba County, TX",48411,63,6055,1040.5
+,"Schleicher County, TX",48413,28,2793,1002.5
+,"Scurry County, TX",48415,163,16703,975.9
+,"Shackelford County, TX",48417,29,3265,888.2
+,"Shelby County, TX",48419,315,25274,1246.3
+,"Sherman County, TX",48421,27,3022,893.4
+,"Smith County, TX",48423,2186,232751,939.2
+,"Somervell County, TX",48425,91,9128,996.9
+,"Starr County, TX",48427,460,64633,711.7
+,"Stephens County, TX",48429,117,9366,1249.2
+,"Sterling County, TX",48431,11,1291,Unreliable
+,"Stonewall County, TX",48433,23,1350,1703.7
+,"Sutton County, TX",48435,33,3776,873.9
+,"Swisher County, TX",48437,81,7397,1095
+,"Tarrant County, TX",48439,13537,2102515,643.8
+,"Taylor County, TX",48441,1444,138034,1046.1
+,"Terrell County, TX",48443,Suppressed,776,Suppressed
+,"Terry County, TX",48445,143,12337,1159.1
+,"Throckmorton County, TX",48447,24,1501,1598.9
+,"Titus County, TX",48449,331,32750,1010.7
+,"Tom Green County, TX",48451,1078,119200,904.4
+,"Travis County, TX",48453,5866,1273954,460.5
+,"Trinity County, TX",48455,229,14651,1563
+,"Tyler County, TX",48457,280,21672,1292
+,"Upshur County, TX",48459,480,41753,1149.6
+,"Upton County, TX",48461,28,3657,765.7
+,"Uvalde County, TX",48463,299,26741,1118.1
+,"Val Verde County, TX",48465,427,49025,871
+,"Van Zandt County, TX",48467,681,56590,1203.4
+,"Victoria County, TX",48469,880,92084,955.6
+,"Walker County, TX",48471,551,72971,755.1
+,"Waller County, TX",48473,342,55246,619
+,"Ward County, TX",48475,96,11998,800.1
+,"Washington County, TX",48477,373,35882,1039.5
+,"Webb County, TX",48479,1434,276652,518.3
+,"Wharton County, TX",48481,435,41556,1046.8
+,"Wheeler County, TX",48483,53,5056,1048.3
+,"Wichita County, TX",48485,1377,132230,1041.4
+,"Wilbarger County, TX",48487,156,12769,1221.7
+,"Willacy County, TX",48489,175,21358,819.4
+,"Williamson County, TX",48491,3152,590551,533.7
+,"Wilson County, TX",48493,437,51070,855.7
+,"Winkler County, TX",48495,76,8010,948.8
+,"Wise County, TX",48497,656,69984,937.4
+,"Wood County, TX",48499,672,45539,1475.7
+,"Yoakum County, TX",48501,63,8713,723.1
+,"Young County, TX",48503,253,18010,1404.8
+,"Zapata County, TX",48505,98,14179,691.2
+,"Zavala County, TX",48507,104,11840,878.4
+Total,,,203362,28995881,701.3
+---,,,,,
+"Dataset: Underlying Cause of Death, 2018-2021, Single Race",,,,,
+Query Parameters:,,,,,
+States: Texas (48),,,,,
+Year/Month: 2019,,,,,
+Group By: County,,,,,
+Show Totals: True,,,,,
+Show Zero Values: True,,,,,
+Show Suppressed: True,,,,,
+"Calculate Rates Per: 100,000",,,,,
+Rate Options: Default intercensal populations for years 2001-2009 (except Infant Age Groups),,,,,
+---,,,,,
+Help: See http://wonder.cdc.gov/wonder/help/ucd-expanded.html for more information.,,,,,
+---,,,,,
+"Query Date: Jun 8, 2023 2:26:11 PM",,,,,
+---,,,,,
+"Suggested Citation: Centers for Disease Control and Prevention, National Center for Health Statistics. National Vital Statistics",,,,,
+"System, Mortality 2018-2021 on CDC WONDER Online Database, released in 2021. Data are from the Multiple Cause of Death Files,",,,,,
+"2018-2021, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative",,,,,
+"Program. Accessed at http://wonder.cdc.gov/ucd-icd10-expanded.html on Jun 8, 2023 2:26:11 PM",,,,,
+---,,,,,
+Caveats:,,,,,
+1. Data are Suppressed when the data meet the criteria for confidentiality constraints. More information:,,,,,
+http://wonder.cdc.gov/wonder/help/ucd-expanded.html#Assurance of Confidentiality.,,,,,
+2. Death rates are flagged as Unreliable when the rate is calculated with a numerator of 20 or less. More information:,,,,,
+http://wonder.cdc.gov/wonder/help/ucd-expanded.html#Unreliable.,,,,,
+"3. The population figures for year 2021 are single-race estimates of the July 1 resident population, from the Vintage 2021",,,,,
+"postcensal series released by the Census Bureau on June 30, 2022. The population figures for year 2020 are single-race estimates",,,,,
+"of the July 1 resident population, from the Vintage 2020 postcensal series released by the Census Bureau on July 27, 2021. The",,,,,
+"population figures for year 2019 are single-race estimates of the July 1 resident population, from the Vintage 2019 postcensal",,,,,
+"series released by the Census Bureau on June 25, 2020. The population figures for year 2018 are single-race estimates of the",,,,,
+"July 1 resident population, from the Vintage 2018 postcensal series released by the Census Bureau on June 20, 2019.",,,,,
+4. The population figures used in the calculation of death rates for the age group 'under 1 year' are the estimates of the,,,,,
+resident population that is under one year of age. More information: http://wonder.cdc.gov/wonder/help/ucd-expanded.html#Age,,,,,
+Group.,,,,,
