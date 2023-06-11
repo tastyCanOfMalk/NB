@@ -1,4 +1,4 @@
-year,state,county,county_code,annual_county_population,annual_all_deaths,annual_hospital_deaths,month,monthly_hospital_deaths,covid_monthly_hospital_deaths
+year,state,county,county_code,annual_county_population,annual_all_deaths,annual_hospital_deaths,month,monthly_hospital_deaths,monthly_covid_hospital_deaths
 2021,TX,Anderson,48001,58402,884,543,Jan,73,25
 2021,TX,Anderson,48001,58402,884,543,Feb,42,10
 2021,TX,Anderson,48001,58402,884,543,Mar,30,Suppressed

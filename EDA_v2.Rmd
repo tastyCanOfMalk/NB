@@ -27,6 +27,7 @@ library(tidyverse)
 library(janitor)
 library(magrittr)
 library(readr)
+library(DT)
 
 theme_set(theme_minimal())
 
@@ -52,7 +53,8 @@ NurseBridge (NB) wants to create a data driven predictive model allowing rural h
 Initial import is only on Texas for the year 2021. When we determine this structure of data is sufficient for analyses further state and year data can be pulled to round off the dataset. It was mentioned that COVID-19 deaths should be excluded, so 
 
 ```{r}
-make_dataset <- function(state, year, export){
+
+make_monthly_dataset <- function(state, year, export){
   
   path1=paste0("data/", state, "_", year, "_01.csv")
   path2=paste0("data/", state, "_", year, "_02.csv")
@@ -104,21 +106,72 @@ make_dataset <- function(state, year, export){
     select(year, state, county, county_code, annual_county_population, annual_all_deaths, annual_hospital_deaths, month, monthly_hospital_deaths, monthly_covid_hospital_deaths)
   
   if(export){
-    export_filename = paste0(state, "_", year, "_all")
+    export_filename = paste0(state, "_", year, "_monthly")
     write_csv(d4, paste0("export/", export_filename, ".csv"))
   }
   
   return(d4)
 }
 
-TX_all <- make_dataset(state = "TX", year = "2021", export = FALSE)
+make_wkday_dataset <- function(state, year, export){
+  
+  path5=paste0("data/", state, "_", year, "_05.csv")
+  path6=paste0("data/", state, "_", year, "_06.csv")
+  
+  month_sub = paste0(year, "/")
 
-TX_all %>% glimpse()
+  d5 <- read_csv(path5) %>% 
+    clean_names() %>% 
+    mutate(
+      month = month(as.numeric(gsub(month_sub, "", month_code)), label=TRUE)
+    ) %>% 
+    select(county_code, month, weekday, deaths) %>% 
+    set_colnames(c("county_code", "month", "weekday", "wkday_hospital_deaths")) %>% 
+    drop_na()
+  
+  d6 <- read_csv(path6) %>% 
+    clean_names() %>% 
+    mutate(
+      month = month(as.numeric(gsub(month_sub, "", month_code)), label=TRUE)
+    ) %>% 
+    select(county_code, month, weekday, deaths) %>% 
+    set_colnames(c("county_code", "month", "weekday", "covid_wkday_hospital_deaths")) %>% 
+    drop_na()
+  
+  d6 <- d5 %>% left_join(d6)
+  
+  if(export){
+    export_filename = paste0(state, "_", year, "_wkday")
+    write_csv(d6, paste0("export/", export_filename, ".csv"))
+  }
+ 
+  return(d6)
+   
+}
 
+TX_2021_monthly <- make_monthly_dataset(state = "TX", year = "2021", export = FALSE)
+TX_2021_wkday <- make_wkday_dataset(state = "TX", year = "2021", export = FALSE)
+
+TX_2021_monthly %>% glimpse()
+TX_2021_wkday %>% glimpse()
 ```
 
-## Note
+## Notes {.tabset .pills}
 
+Shortcomings become more evident the more narrowly we focus our data. Suppressed data becomes more and more abundant as we drill down into tallying deaths by weekdays. The effect would be exacerbated if skimming off COVID-related deaths, possibly making a large portion of the data unusable.
+
+### Monthly data
+
+Most data is visible on the monthly table. We start losing data due to `Suppression` when we get to Counties with smaller populations
+
+```{r}
+DT::datatable(TX_2021_monthly)
+```
+
+### Weekday data
+```{r}
+DT::datatable(TX_2021_wkday)
+```
 
 
 
