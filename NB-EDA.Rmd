@@ -28,91 +28,14 @@ library(janitor)
 library(DT)
 library(plotly) 
 library(scales)
+
 theme_set(theme_minimal())
+
 rm(list = ls())
 
-# 2021 population for comparison
-TX_pop_2021 <- read_csv("data/TX_2021_total_pop.csv") %>% 
-  janitor::clean_names() %>% 
-  mutate(county = as.factor(gsub(" County", "",gsub(", TX", "", county))),
-         county_code = as.factor(county_code),
-         crude_rate_per_100k = as.numeric(gsub("Unreliable", NA, crude_rate)),
-         annual_deaths = as.numeric(gsub("Suppressed", NA, deaths))) %>% 
-  select(county_code, annual_deaths, population, crude_rate_per_100k) %>% 
-  drop_na()
 
-# TX_day <- read_csv("data/TX_2021_deaths_weekday.csv") %>% 
-#   janitor::clean_names() %>% 
-#   mutate(month = as.factor(gsub("2021/", "", month_code)),
-#          month = month(as.numeric(month), label=TRUE),
-#          county = as.factor(gsub(" County", "",gsub(", TX", "", county))),
-#          county_code = as.factor(county_code),
-#          weekday = as.factor(weekday),
-#          daily_deaths = as.numeric(gsub("Suppressed", NA, deaths))) %>% 
-#   select(county, county_code, month, weekday, daily_deaths) %>% 
-#   filter(weekday != "Unknown")
 
-setup_data <- function(year, state){
 
-  path_pop <- paste0("data/", state, "_", year, "_total_pop.csv")
-  path_day <- paste0("data/", state, "_", year, "_deaths_weekday.csv")
-  
-  temp_pop <- read_csv(path_pop) %>% 
-    janitor::clean_names() %>% 
-    mutate(county = as.factor(gsub(" County", "",gsub(", TX", "", county))),
-           county_code = as.factor(county_code),
-           # crude_rate_per_100k = as.numeric(gsub("Unreliable", NA, crude_rate)),
-           # crude_rate_per_100k = crude_rate,
-           # annual_deaths = as.numeric(gsub("Suppressed", NA, deaths))
-           annual_county_deaths = deaths,
-           annual_county_population = population
-           ) %>% 
-    select(county_code, annual_county_deaths, annual_county_population) %>%
-    drop_na()
-  
-  month_gsub = paste0(year,"/")
-  temp_day <- read_csv(path_day) %>% 
-    janitor::clean_names() %>% 
-    mutate(state = as.factor(state),
-           year = as.numeric(year),
-           month = gsub(month_gsub, "", month_code),
-           month = month(as.numeric(month), label=TRUE),
-           county = as.factor(gsub(" County", "",gsub(", TX", "", county))),
-           county_code = as.factor(county_code),
-           weekday = as.factor(weekday),
-           # daily_deaths = as.numeric(gsub("Suppressed", NA, deaths)),
-           daily_county_deaths = deaths
-           ) %>% 
-    select(state, county, county_code, year, month, weekday, daily_county_deaths)
-    # filter(weekday != "Unknown")
-  
-  temp_all <- temp_day %>% left_join(temp_pop, by="county_code")
-  
-  return(temp_all)
-}
-
-join_data <- function(state){
-  
-  tmp_2018 <- setup_data(year = "2018", state = state)
-  tmp_2019 <- setup_data(year = "2019", state = state)
-  tmp_2020 <- setup_data(year = "2020", state = state)
-  tmp_2021 <- setup_data(year = "2021", state = state)
-  
-  tmp_all <-  
-    bind_rows(
-      tmp_2018, 
-      tmp_2019,
-      tmp_2020,
-      tmp_2021
-    )
-
-  tmp_all$weekday <- factor(tmp_all$weekday, levels = c("Sunday", "Monday", 
-    "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
-  
-  return(tmp_all)
-}
-
-TX_all <- join_data(state = "TX")
 ```
 
 # Intro
