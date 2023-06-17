@@ -155,7 +155,8 @@ make_monthly_dataset <- function(state, year, export){
     right_join(d3) %>% 
     mutate(year = as.numeric(year),
            state = as.factor(state),
-           county = as.factor(gsub(county_sub, "", county))
+           county = as.factor(gsub(county_sub, "", county)),
+           monthly_covid_hospital_deaths = as.character(monthly_covid_hospital_deaths)
     ) %>% 
     select(year, state, county, county_code, annual_county_population, annual_all_deaths, annual_hospital_deaths, month, monthly_hospital_deaths, monthly_covid_hospital_deaths)
   
@@ -190,6 +191,9 @@ make_wkday_dataset <- function(state, year, export){
     ) %>% 
     select(county_code, month, weekday, deaths) %>% 
     set_colnames(c("county_code", "month", "weekday", "covid_wkday_hospital_deaths")) %>% 
+    mutate(
+      covid_wkday_hospital_deaths = as.character(covid_wkday_hospital_deaths)
+    ) %>% 
     drop_na()
   
   d6 <- d5 %>% left_join(d6)
@@ -203,6 +207,8 @@ make_wkday_dataset <- function(state, year, export){
    
 }
 
+to_remove = list()
+
 load_datasets <- function(state, year, export = FALSE){
 
   name_monthly = paste0(state, "_", year, "_monthly")
@@ -210,8 +216,9 @@ load_datasets <- function(state, year, export = FALSE){
 
   name_wkday = paste0(state, "_", year, "_wkday")
   assign(name_wkday, make_monthly_dataset(state = state, year = year, export = export), envir = parent.frame())
-  
-  
+
+  to_remove <<- append(to_remove, name_monthly)  
+  to_remove <<- append(to_remove, name_wkday)  
 }
 
 export_datasets <- function(state, year, export = TRUE){
@@ -223,17 +230,31 @@ export_datasets(state = "TX", year = "2021")
 export_datasets(state = "TX", year = "2020")
 export_datasets(state = "TX", year = "2019")
 export_datasets(state = "TX", year = "2018")
-load_datasets   (state = "TX", year = "2021")
-load_datasets   (state = "TX", year = "2020")
-load_datasets   (state = "TX", year = "2019")
-load_datasets   (state = "TX", year = "2018")
+load_datasets  (state = "TX", year = "2021")
+load_datasets  (state = "TX", year = "2020")
+load_datasets  (state = "TX", year = "2019")
+load_datasets  (state = "TX", year = "2018")
 
 export_datasets(state = "OK", year = "2021")
 export_datasets(state = "OK", year = "2020")
 export_datasets(state = "OK", year = "2019")
 export_datasets(state = "OK", year = "2018")
-load_datasets   (state = "OK", year = "2021")
-load_datasets   (state = "OK", year = "2020")
-load_datasets   (state = "OK", year = "2019")
-load_datasets   (state = "OK", year = "2018")
+load_datasets  (state = "OK", year = "2021")
+load_datasets  (state = "OK", year = "2020")
+load_datasets  (state = "OK", year = "2019")
+load_datasets  (state = "OK", year = "2018")
 
+OK_all <- bind_rows(list(OK_2018_monthly,
+                         OK_2019_monthly,
+                         OK_2020_monthly,
+                         OK_2021_monthly))
+TX_all <- bind_rows(list(TX_2018_monthly,
+                         TX_2019_monthly,
+                         TX_2020_monthly,
+                         TX_2021_monthly))
+
+write_csv(OK_all, paste0("export/OK_all.csv"))
+write_csv(TX_all, paste0("export/TX_all.csv"))
+
+remove(list = to_remove %>% unlist())
+remove(to_remove)
