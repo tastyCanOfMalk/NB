@@ -1,0 +1,105 @@
+Notes,County,County Code,Deaths,Population,Crude Rate
+,"Adair County, OK",40001,125,Not Applicable,Not Applicable
+,"Alfalfa County, OK",40003,40,Not Applicable,Not Applicable
+,"Atoka County, OK",40005,94,Not Applicable,Not Applicable
+,"Beaver County, OK",40007,47,Not Applicable,Not Applicable
+,"Beckham County, OK",40009,148,Not Applicable,Not Applicable
+,"Blaine County, OK",40011,96,Not Applicable,Not Applicable
+,"Bryan County, OK",40013,347,Not Applicable,Not Applicable
+,"Caddo County, OK",40015,231,Not Applicable,Not Applicable
+,"Canadian County, OK",40017,732,Not Applicable,Not Applicable
+,"Carter County, OK",40019,347,Not Applicable,Not Applicable
+,"Cherokee County, OK",40021,297,Not Applicable,Not Applicable
+,"Choctaw County, OK",40023,131,Not Applicable,Not Applicable
+,"Cimarron County, OK",40025,21,Not Applicable,Not Applicable
+,"Cleveland County, OK",40027,1299,Not Applicable,Not Applicable
+,"Coal County, OK",40029,57,Not Applicable,Not Applicable
+,"Comanche County, OK",40031,611,Not Applicable,Not Applicable
+,"Cotton County, OK",40033,49,Not Applicable,Not Applicable
+,"Craig County, OK",40035,125,Not Applicable,Not Applicable
+,"Creek County, OK",40037,509,Not Applicable,Not Applicable
+,"Custer County, OK",40039,217,Not Applicable,Not Applicable
+,"Delaware County, OK",40041,336,Not Applicable,Not Applicable
+,"Dewey County, OK",40043,40,Not Applicable,Not Applicable
+,"Ellis County, OK",40045,25,Not Applicable,Not Applicable
+,"Garfield County, OK",40047,493,Not Applicable,Not Applicable
+,"Garvin County, OK",40049,198,Not Applicable,Not Applicable
+,"Grady County, OK",40051,362,Not Applicable,Not Applicable
+,"Grant County, OK",40053,49,Not Applicable,Not Applicable
+,"Greer County, OK",40055,40,Not Applicable,Not Applicable
+,"Harmon County, OK",40057,20,Not Applicable,Not Applicable
+,"Harper County, OK",40059,28,Not Applicable,Not Applicable
+,"Haskell County, OK",40061,116,Not Applicable,Not Applicable
+,"Hughes County, OK",40063,107,Not Applicable,Not Applicable
+,"Jackson County, OK",40065,156,Not Applicable,Not Applicable
+,"Jefferson County, OK",40067,43,Not Applicable,Not Applicable
+,"Johnston County, OK",40069,80,Not Applicable,Not Applicable
+,"Kay County, OK",40071,376,Not Applicable,Not Applicable
+,"Kingfisher County, OK",40073,119,Not Applicable,Not Applicable
+,"Kiowa County, OK",40075,110,Not Applicable,Not Applicable
+,"Latimer County, OK",40077,70,Not Applicable,Not Applicable
+,"Le Flore County, OK",40079,399,Not Applicable,Not Applicable
+,"Lincoln County, OK",40081,208,Not Applicable,Not Applicable
+,"Logan County, OK",40083,242,Not Applicable,Not Applicable
+,"Love County, OK",40085,84,Not Applicable,Not Applicable
+,"McClain County, OK",40087,204,Not Applicable,Not Applicable
+,"McCurtain County, OK",40089,242,Not Applicable,Not Applicable
+,"McIntosh County, OK",40091,163,Not Applicable,Not Applicable
+,"Major County, OK",40093,57,Not Applicable,Not Applicable
+,"Marshall County, OK",40095,112,Not Applicable,Not Applicable
+,"Mayes County, OK",40097,302,Not Applicable,Not Applicable
+,"Murray County, OK",40099,140,Not Applicable,Not Applicable
+,"Muskogee County, OK",40101,621,Not Applicable,Not Applicable
+,"Noble County, OK",40103,92,Not Applicable,Not Applicable
+,"Nowata County, OK",40105,75,Not Applicable,Not Applicable
+,"Okfuskee County, OK",40107,127,Not Applicable,Not Applicable
+,"Oklahoma County, OK",40109,4665,Not Applicable,Not Applicable
+,"Okmulgee County, OK",40111,317,Not Applicable,Not Applicable
+,"Osage County, OK",40113,289,Not Applicable,Not Applicable
+,"Ottawa County, OK",40115,278,Not Applicable,Not Applicable
+,"Pawnee County, OK",40117,119,Not Applicable,Not Applicable
+,"Payne County, OK",40119,381,Not Applicable,Not Applicable
+,"Pittsburg County, OK",40121,349,Not Applicable,Not Applicable
+,"Pontotoc County, OK",40123,236,Not Applicable,Not Applicable
+,"Pottawatomie County, OK",40125,510,Not Applicable,Not Applicable
+,"Pushmataha County, OK",40127,84,Not Applicable,Not Applicable
+,"Roger Mills County, OK",40129,20,Not Applicable,Not Applicable
+,"Rogers County, OK",40131,560,Not Applicable,Not Applicable
+,"Seminole County, OK",40133,220,Not Applicable,Not Applicable
+,"Sequoyah County, OK",40135,294,Not Applicable,Not Applicable
+,"Stephens County, OK",40137,369,Not Applicable,Not Applicable
+,"Texas County, OK",40139,130,Not Applicable,Not Applicable
+,"Tillman County, OK",40141,47,Not Applicable,Not Applicable
+,"Tulsa County, OK",40143,3940,Not Applicable,Not Applicable
+,"Wagoner County, OK",40145,381,Not Applicable,Not Applicable
+,"Washington County, OK",40147,414,Not Applicable,Not Applicable
+,"Washita County, OK",40149,100,Not Applicable,Not Applicable
+,"Woods County, OK",40151,101,Not Applicable,Not Applicable
+,"Woodward County, OK",40153,142,Not Applicable,Not Applicable
+Total,,,25305,Not Applicable,Not Applicable
+---,,,,,
+"Dataset: Underlying Cause of Death, 2018-2021, Single Race",,,,,
+Query Parameters:,,,,,
+Place of Death: Medical Facility - Inpatient; Medical Facility - Outpatient or ER; Medical Facility - Dead on Arrival; Medical,,,,,
+Facility - Status unknown; Hospice facility; Nursing home/long term care,,,,,
+States: Oklahoma (40),,,,,
+Year/Month: 2019,,,,,
+Group By: County,,,,,
+Show Totals: True,,,,,
+Show Zero Values: True,,,,,
+Show Suppressed: True,,,,,
+"Calculate Rates Per: 100,000",,,,,
+Rate Options: Default intercensal populations for years 2001-2009 (except Infant Age Groups),,,,,
+---,,,,,
+Help: See http://wonder.cdc.gov/wonder/help/ucd-expanded.html for more information.,,,,,
+---,,,,,
+"Query Date: Jun 17, 2023 2:06:53 PM",,,,,
+---,,,,,
+"Suggested Citation: Centers for Disease Control and Prevention, National Center for Health Statistics. National Vital Statistics",,,,,
+"System, Mortality 2018-2021 on CDC WONDER Online Database, released in 2021. Data are from the Multiple Cause of Death Files,",,,,,
+"2018-2021, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative",,,,,
+"Program. Accessed at http://wonder.cdc.gov/ucd-icd10-expanded.html on Jun 17, 2023 2:06:53 PM",,,,,
+---,,,,,
+Caveats:,,,,,
+"1. Population and rates are labeled 'Not Applicable' when Autopsy, Place of Death, Weekday or Month are grouped by or limited,",,,,,
+due to lack of a valid population. More information: http://wonder.cdc.gov/wonder/help/ucd-expanded.html#NotApplicableRates.,,,,,

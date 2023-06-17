@@ -1,0 +1,112 @@
+Notes,County,County Code,Deaths,Population,Crude Rate
+,"Adair County, OK",40001,257,22082,1163.843854723
+,"Alfalfa County, OK",40003,68,5754,1181.786583246
+,"Atoka County, OK",40005,169,13838,1221.274750687
+,"Beaver County, OK",40007,54,5319,1015.228426396
+,"Beckham County, OK",40009,237,21709,1091.713114377
+,"Blaine County, OK",40011,126,9485,1328.413284133
+,"Bryan County, OK",40013,502,47192,1063.739616884
+,"Caddo County, OK",40015,403,28977,1390.758187528
+,"Canadian County, OK",40017,1119,144447,774.67860184
+,"Carter County, OK",40019,586,48177,1216.348049899
+,"Cherokee County, OK",40021,532,48675,1092.963533641
+,"Choctaw County, OK",40023,204,14668,1390.782656122
+,"Cimarron County, OK",40025,18,2153,Unreliable
+,"Cleveland County, OK",40027,2073,281669,735.970234566
+,"Coal County, OK",40029,74,5520,1340.579710145
+,"Comanche County, OK",40031,1080,120422,896.846091246
+,"Cotton County, OK",40033,74,5776,1281.163434903
+,"Craig County, OK",40035,186,14306,1300.15378163
+,"Creek County, OK",40037,844,71604,1178.705100274
+,"Custer County, OK",40039,312,29036,1074.528171924
+,"Delaware County, OK",40041,606,42733,1418.107785552
+,"Dewey County, OK",40043,62,4894,1266.857376379
+,"Ellis County, OK",40045,61,3952,1543.522267206
+,"Garfield County, OK",40047,660,60913,1083.512550687
+,"Garvin County, OK",40049,398,27811,1431.088418252
+,"Grady County, OK",40051,576,55551,1036.885024572
+,"Grant County, OK",40053,60,4326,1386.962552011
+,"Greer County, OK",40055,63,5821,1082.288266621
+,"Harmon County, OK",40057,43,2664,1614.114114114
+,"Harper County, OK",40059,47,3797,1237.819331051
+,"Haskell County, OK",40061,155,12668,1223.555415219
+,"Hughes County, OK",40063,179,13335,1342.332208474
+,"Jackson County, OK",40065,266,24949,1066.174996994
+,"Jefferson County, OK",40067,95,6123,1551.527029234
+,"Johnston County, OK",40069,141,10949,1287.788839163
+,"Kay County, OK",40071,615,44161,1392.631507439
+,"Kingfisher County, OK",40073,163,15816,1030.601922104
+,"Kiowa County, OK",40075,135,8729,1546.568908237
+,"Latimer County, OK",40077,148,10231,1446.583911641
+,"Le Flore County, OK",40079,645,49980,1290.516206483
+,"Lincoln County, OK",40081,425,34920,1217.067583047
+,"Logan County, OK",40083,391,47291,826.79579624
+,"Love County, OK",40085,125,10134,1233.471482139
+,"McClain County, OK",40087,416,39985,1040.390146305
+,"McCurtain County, OK",40089,388,32703,1186.435495214
+,"McIntosh County, OK",40091,333,19815,1680.545041635
+,"Major County, OK",40093,122,7644,1596.023024594
+,"Marshall County, OK",40095,207,16806,1231.702963227
+,"Mayes County, OK",40097,472,41107,1148.222930401
+,"Murray County, OK",40099,189,13953,1354.547409159
+,"Muskogee County, OK",40101,901,68362,1317.983675141
+,"Noble County, OK",40103,149,11289,1319.868898928
+,"Nowata County, OK",40105,134,10218,1311.411235075
+,"Okfuskee County, OK",40107,197,12098,1628.368325343
+,"Oklahoma County, OK",40109,7346,792582,926.844162497
+,"Okmulgee County, OK",40111,522,38335,1361.67992696
+,"Osage County, OK",40113,484,47014,1029.480580253
+,"Ottawa County, OK",40115,422,31175,1353.648757017
+,"Pawnee County, OK",40117,213,16390,1299.572910311
+,"Payne County, OK",40119,630,82040,767.918088737
+,"Pittsburg County, OK",40121,623,43877,1419.878296146
+,"Pontotoc County, OK",40123,477,38247,1247.156639736
+,"Pottawatomie County, OK",40125,870,72679,1197.044538312
+,"Pushmataha County, OK",40127,144,11179,1288.12952858
+,"Roger Mills County, OK",40129,37,3656,1012.035010941
+,"Rogers County, OK",40131,939,91984,1020.829709515
+,"Seminole County, OK",40133,363,24578,1476.930588331
+,"Sequoyah County, OK",40135,521,41179,1265.207994366
+,"Stephens County, OK",40137,613,43265,1416.849647521
+,"Texas County, OK",40139,185,20455,904.424346126
+,"Tillman County, OK",40141,103,7348,1401.741970604
+,"Tulsa County, OK",40143,6142,648360,947.31322105
+,"Wagoner County, OK",40145,648,80110,808.887779303
+,"Washington County, OK",40147,705,51843,1359.875007233
+,"Washita County, OK",40149,157,11127,1410.982295318
+,"Woods County, OK",40151,105,8897,1180.173092054
+,"Woodward County, OK",40153,199,20222,984.076748096
+Total,,,40933,3943079,1038.097385317
+---,,,,,
+"Dataset: Underlying Cause of Death, 2018-2021, Single Race",,,,,
+Query Parameters:,,,,,
+States: Oklahoma (40),,,,,
+Year/Month: 2018,,,,,
+Group By: County,,,,,
+Show Totals: True,,,,,
+Show Zero Values: True,,,,,
+Show Suppressed: True,,,,,
+"Calculate Rates Per: 100,000",,,,,
+Rate Options: Default intercensal populations for years 2001-2009 (except Infant Age Groups),,,,,
+---,,,,,
+Help: See http://wonder.cdc.gov/wonder/help/ucd-expanded.html for more information.,,,,,
+---,,,,,
+"Query Date: Jun 17, 2023 2:05:35 PM",,,,,
+---,,,,,
+"Suggested Citation: Centers for Disease Control and Prevention, National Center for Health Statistics. National Vital Statistics",,,,,
+"System, Mortality 2018-2021 on CDC WONDER Online Database, released in 2021. Data are from the Multiple Cause of Death Files,",,,,,
+"2018-2021, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative",,,,,
+"Program. Accessed at http://wonder.cdc.gov/ucd-icd10-expanded.html on Jun 17, 2023 2:05:35 PM",,,,,
+---,,,,,
+Caveats:,,,,,
+1. Death rates are flagged as Unreliable when the rate is calculated with a numerator of 20 or less. More information:,,,,,
+http://wonder.cdc.gov/wonder/help/ucd-expanded.html#Unreliable.,,,,,
+"2. The population figures for year 2021 are single-race estimates of the July 1 resident population, from the Vintage 2021",,,,,
+"postcensal series released by the Census Bureau on June 30, 2022. The population figures for year 2020 are single-race estimates",,,,,
+"of the July 1 resident population, from the Vintage 2020 postcensal series released by the Census Bureau on July 27, 2021. The",,,,,
+"population figures for year 2019 are single-race estimates of the July 1 resident population, from the Vintage 2019 postcensal",,,,,
+"series released by the Census Bureau on June 25, 2020. The population figures for year 2018 are single-race estimates of the",,,,,
+"July 1 resident population, from the Vintage 2018 postcensal series released by the Census Bureau on June 20, 2019.",,,,,
+3. The population figures used in the calculation of death rates for the age group 'under 1 year' are the estimates of the,,,,,
+resident population that is under one year of age. More information: http://wonder.cdc.gov/wonder/help/ucd-expanded.html#Age,,,,,
+Group.,,,,,

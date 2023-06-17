@@ -28,6 +28,7 @@ library(janitor)
 library(magrittr)
 library(readr)
 library(DT)
+library(plotly)
 
 theme_set(theme_minimal())
 
@@ -172,6 +173,84 @@ DT::datatable(TX_2021_monthly)
 ```{r}
 DT::datatable(TX_2021_wkday)
 ```
+
+# EDA
+
+We want to make predictions on likelihood of death in a hospital (where nurses would be required) with any COVID data removed. 
+
+## Removing COVID Deaths
+
+We need to calculate an adjusted death number from total and COVID deaths. This poses an problem due to `Suppressed` being inserted when the death number is between 1-9. 
+
+### Monthly data
+
+```{r}
+suppressedValue = 5
+TX_2021_monthly %>% 
+  mutate(
+    # replace Suppressed
+    monthly_hospital_deaths = 
+      as.numeric(ifelse(monthly_hospital_deaths == "Suppressed", suppressedValue, monthly_hospital_deaths)),
+    monthly_covid_hospital_deaths = 
+      as.numeric(ifelse(monthly_covid_hospital_deaths == "Suppressed", suppressedValue, monthly_covid_hospital_deaths)),
+    # Calculate non-COVID
+    monthly_adj_hospital_deaths = monthly_hospital_deaths - monthly_covid_hospital_deaths
+         ) %>% 
+  group_by(month) %>% 
+  summarise(deaths = sum(monthly_covid_hospital_deaths)) %>% 
+  ggplot(aes(x=month, y=deaths, group=1))+
+  geom_point() + 
+  geom_line()+
+  labs(
+    title = "Non-Covid deaths, 2021"
+  ) + 
+  xlab("Month")+
+  ylab("Deaths")
+  
+gg_supp <- TX_2021_monthly %>% 
+  mutate(
+    # replace Suppressed with 1
+    mhd1 = 
+      as.numeric(ifelse(monthly_hospital_deaths == "Suppressed", 1, monthly_hospital_deaths)),
+    mchd1 = 
+      as.numeric(ifelse(monthly_covid_hospital_deaths == "Suppressed", 1, monthly_covid_hospital_deaths)),
+    # Calculate non-COVID
+    mahd1 = mhd1 - mchd1, 
+    # replace Suppressed with 5
+    mhd5 = 
+      as.numeric(ifelse(monthly_hospital_deaths == "Suppressed", 5, monthly_hospital_deaths)),
+    mchd5 = 
+      as.numeric(ifelse(monthly_covid_hospital_deaths == "Suppressed", 5, monthly_covid_hospital_deaths)),
+    # Calculate non-COVID
+    mahd5 = mhd5 - mchd5, 
+    # replace Suppressed with 10
+    mhd10 = 
+      as.numeric(ifelse(monthly_hospital_deaths == "Suppressed", 10, monthly_hospital_deaths)),
+    mchd10 = 
+      as.numeric(ifelse(monthly_covid_hospital_deaths == "Suppressed", 10, monthly_covid_hospital_deaths)),
+    # Calculate non-COVID
+    mahd10 = mhd10 - mchd10, 
+         ) %>% 
+  group_by(month) %>% 
+  summarise(
+    "S=1" = sum(mahd1),
+    "S=5" = sum(mahd5),
+    "S=10" = sum(mahd10),
+    ) %>% 
+  pivot_longer(
+    cols = "S=1":"S=10"
+  ) %>% 
+  ggplot(aes(x=month, y=value, color=name, fill=name, group=name))+
+  geom_point()+
+  geom_line()+
+  labs(
+    title = "Replacing Suppressed Values"
+  )
+# ggplotly(gg_supp)
+  
+```
+
+
 
 
 
