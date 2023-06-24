@@ -14,8 +14,8 @@ df_wkday <- bind_rows(OK_all_wkday,
                       TX_all_wkday)
 
 # Replace suppressed ----
-df_monthly[df_monthly == "Suppressed"] <- "5"  
-df_wkday[df_wkday == "Suppressed"] <- "5"  
+df_monthly[df_monthly == "Suppressed"] <- NA
+df_wkday[df_wkday == "Suppressed"] <- NA  
 
 # Create annual  DF ----
 df_annual <- df_monthly %>% 
@@ -28,9 +28,9 @@ df_annual <- df_monthly %>%
     county_code = as.factor(county_code),
     annual_adj_deaths = as.numeric(annual_hospital_deaths) - as.numeric(annual_covid_hospital_deaths),
     annual_crude_rate_10k = annual_adj_deaths/annual_county_population*10000
-    ) %>% 
-  select(year, state, county, county_code, annual_county_population, annual_adj_deaths, annual_crude_rate_10k) %>% 
-  set_colnames(c("year", "state", "county", "county_code", "county_population", "anunal_adj_deaths", "annual_crude_rate_10k")) %>%
+    ) %>% view()
+  select(year, state, county, county_code, annual_county_population, annual_adj_deaths, annual_crude_rate_10k) %>%
+  set_colnames(c("year", "state", "county", "county_code", "county_population", "annual_adj_deaths", "annual_crude_rate_10k")) %>%
   unique()
 
 # Create monthly DF ----

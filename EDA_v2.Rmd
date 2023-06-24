@@ -29,14 +29,15 @@ library(magrittr)
 library(readr)
 library(DT)
 library(plotly)
+library(gridExtra)
 
 theme_set(theme_minimal())
 
 rm(list = ls())
 
-df_wkday   <- read_csv("export2/df_wkday.csv")   %>% mutate_if(is.character, as.factor)
-df_monthly <- read_csv("export2/df_monthly.csv") %>% mutate_if(is.character, as.factor)
-df_annual  <- read_csv("export2/df_annual.csv")  %>% mutate_if(is.character, as.factor)
+df_wkday   <- read_csv("export2/df_wkday.csv")   %>% mutate_if(is.character, as.factor) %>% mutate(year = as.factor(year))
+df_monthly <- read_csv("export2/df_monthly.csv") %>% mutate_if(is.character, as.factor) %>% mutate(year = as.factor(year))
+df_annual  <- read_csv("export2/df_annual.csv")  %>% mutate_if(is.character, as.factor) %>% mutate(year = as.factor(year))
 ```
 
 # Intro
@@ -53,19 +54,126 @@ We will start with monthly data and attempt to work into the day of the week. Du
 
 -   Data was pulled from the CDC website by grouping by County, Month, and Weekday.
 -   *Suppressed* death counts were added via the CDC to protect privacy, and mask any death values number 1-9.
-    * Values replaced with `5`.
--   *Unreliable* was appended to calculated crude-death-rates if total deaths were below 20.
+    * *Suppressed* values replaced with `5`.
 
 ## Glimpse
 
 Initial imports were performed on Texas and Oklahoma ranging from 2018-21 as these two locations were specifically mentioned by NB as some of their primary areas of focus.  
 
-Should be noted that when deaths are between 1-9, they are displayed as "Suppressed", to preserve privacy.
+`adj_death` values are calculated by substracting COVID deaths from in-hospital deaths.
+`crude_rate_10k` values are calculated by dividing `adj_death` values by `county_population` values and multiplying by 10,000. This gives a mortality rate per 10,000 people per county. 
 
 ```{r}
+df_wkday %>% glimpse()
+df_monthly %>% glimpse()
+df_annual %>% glimpse()
+```
 
+## Suppressed 
+
+Early on in EDA it became evident that some replaced `Suppressed` values are skewing data in counties with low populations. For example, Loving, TX had just a population of 57, but with 5 deaths the crude rate is at a dramatic 877 deaths per 10k people.
+
+```{r}
+df_annual %>%
+  select(state, county, county_population, annual_adj_deaths, annual_crude_rate_10k) %>% 
+  arrange(-annual_crude_rate_10k) %>% 
+  slice(1:100)
+```
+
+A boxplot shows the outlier clearly.
+
+```{r}
+df_annual %>% 
+  ggplot(aes(x=year, y=annual_crude_rate_10k, group=year))+
+  geom_boxplot()+
+  facet_wrap(~state, scales='free_y')
+```
+
+If we filter out such low populations areas we may negatively impact certain counties. There are a few options: 
+
+* Keep the data as it is (skewed results)
+* Replace values with 1 instead of 5 (less skewed results?)
+* Use the lower value (1) to prevent heavily skewed results (i.e., Loving, TX)
+* Remove all Suppressed values (negative impact?)
+* Impute missing values (MICE, GLM, etc)
+
+We can see the distributions change subtly for Texas. 
+Also noteworthy is that some adjusted death rates end up negative and may just need reset to a 0 value.
+$$Adjusted Deaths = In Hospital Deaths - COVID Deaths$$
+Annual COVID deaths are calculated by summarising monthly COVID deaths. In some cases these are all very low values, and substituting with all 5's may actually increase the number significantly above the in hospital death count therefore producing a negative number. 
+
+```{r fig.height=9}
+g1 <- df_annual %>% 
+  filter(county != "Loving") %>% 
+  ggplot(aes(x=year, y=annual_crude_rate_10k, group=year))+
+  geom_boxplot(outlier.colour = NA)+
+  geom_jitter(alpha=.1, width=.1)+
+  facet_wrap(~state, scales='free_y')+
+  labs(
+    title = "Death rate over time by State",
+    subtitle = "without Loving, TX"
+    )+
+  scale_y_continuous(breaks = seq(0,200,50))
+
+g2 <- df_annual %>% 
+  filter(annual_adj_deaths > 10) %>% 
+  ggplot(aes(x=year, y=annual_crude_rate_10k, group=year))+
+  geom_boxplot(outlier.colour = NA)+
+  geom_jitter(alpha=.1, width=.1)+
+  facet_wrap(~state, scales='free_y')+
+  labs(
+    title = "Death rate over time by State",
+    subtitle = "Adjusted deaths > 10 only",
+    )+
+  scale_y_continuous(breaks = seq(0,200,50))
+
+grid.arrange(g1,g2)
+```
+
+# EDA
+
+* How have death rates changed over time for each state?
+    * by year
+    * by month-year
+
+## Annual
+
+Overall rates seem to have dropped off over time. 
+
+```{r}
+df_annual %>% 
+  filter(annual_crude_rate_10k < 750) %>% 
+  mutate(annual_crude_rate_10k = ifelse(annual_crude_rate_10k < 1, 0, annual_crude_rate_10k)) %>% 
+  ggplot(aes(x=year, y=annual_crude_rate_10k, group=year))+
+  geom_boxplot()+
+  facet_wrap(~state)
 
 ```
 
+## Monthly
+
+```{r}
+
+df_monthly %>% 
+  group_by(year, month, state) %>% 
+  summarise(crude_mean = mean(monthly_crude_rate_10k)) %>% 
+  mutate(date = ymd(paste0(as.character(year), "-", as.character(month), "-01"))) %>% 
+  ggplot(aes(x=date, y=crude_mean, group=year))+
+  geom_boxplot(outlier.colour = NA)+
+  geom_jitter(alpha=.4, width=.04)+
+  facet_wrap(~state)
+
+df_monthly %>% 
+  filter(state == "OK") %>% 
+  filter(monthly_crude_rate_10k < 750) %>% 
+  ggplot(aes(x=date, y=monthly_crude_rate_10k, group=county))+
+  geom_point()+
+  geom_line(aes(group=county))+
+  facet_wrap(~county)
+
+```
+
+
+## Rates over time
 
 
