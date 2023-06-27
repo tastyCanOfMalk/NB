@@ -35,9 +35,21 @@ theme_set(theme_minimal())
 
 rm(list = ls())
 
-df_wkday   <- read_csv("export2/df_wkday.csv")   %>% mutate_if(is.character, as.factor) %>% mutate(year = as.factor(year))
-df_monthly <- read_csv("export2/df_monthly.csv") %>% mutate_if(is.character, as.factor) %>% mutate(year = as.factor(year))
-df_annual  <- read_csv("export2/df_annual.csv")  %>% mutate_if(is.character, as.factor) %>% mutate(year = as.factor(year))
+df_wkday   <- read_csv("export2/df_wkday.csv")   %>% 
+  mutate_if(is.character, as.factor) %>% 
+  mutate(year = as.factor(year))
+df_monthly <- read_csv("export2/df_monthly.csv") %>% 
+  mutate_if(is.character, as.factor) %>% 
+  mutate(year = as.factor(year))
+df_annual  <- read_csv("export2/df_annual.csv")  %>%
+  mutate_if(is.character, as.factor) %>% 
+  mutate(year = as.factor(year))
+df_annual_5  <- read_csv("example_data/df_annual_5.csv")  %>%
+  mutate_if(is.character, as.factor) %>% 
+  mutate(year = as.factor(year))
+df_annual_neg  <- read_csv("example_data/df_annual_neg.csv")  %>%
+  mutate_if(is.character, as.factor) %>% 
+  mutate(year = as.factor(year))
 ```
 
 # Intro
@@ -71,14 +83,76 @@ df_annual %>% glimpse()
 
 ## Suppressed 
 
-Early on in EDA it became evident that some replaced `Suppressed` values are skewing data in counties with low populations. For example, Loving, TX had just a population of 57, but with 5 deaths the crude rate is at a dramatic 877 deaths per 10k people.
+Early on in EDA it became evident that some replaced `Suppressed` values were skewing data in counties with low populations. For example, Loving, TX had just a population of 57, but with 5 deaths the crude rate is at a dramatic 877 deaths per 10k people.
 
 ```{r}
-df_annual %>%
-  select(state, county, county_population, annual_adj_deaths, annual_crude_rate_10k) %>% 
+df_annual_5 %>%
+  select(state, county, county_population, annual_adj_deaths, annual_crude_rate_10k) %>%
   arrange(-annual_crude_rate_10k) %>% 
   slice(1:100)
 ```
+
+### Histogram
+
+When Suppressed values are replaced with 5, we also see it's possible to have negative death rates. For example, if there are 5 months in a year with Suppressed COVID hospital deaths, they are all converted to the value 5. The summarised value would then be 25 COVID hospital deaths. The non-suppressed data shows, however, that the total in-hospital deaths over that same year is 10. Since our adjusted death rate subtracts in hospital deaths from COVID deaths we end up with `10 - 25 = -15` in-hospital, non-COVID deaths. Logically, this doesn't make sense and we could assume the true suppressed values are between 1 and 2 for each fo those months.
+
+This histogram below illustrates the issue with using a value of 5 for Suppressed values, resulting in negative value as well as dramatically high rates for low population counties.  
+
+```{r}
+ggplotly(
+  df_annual_5 %>% 
+    ggplot(aes(x=annual_crude_rate_10k))+
+    geom_histogram(bins=50, fill=NA, color="black")+
+    geom_vline(xintercept = 0, color="red")+
+    labs(
+      title="Distribution of annual crude death rates"
+    )
+  )
+```
+
+### Replace with 1
+
+If we replace values with 1 instead of 5 we see the distribution follows a more normal curve as would be expected. However, we do see that some rates appear to still fall into the negative ranges. These specific examples are again artifacts of our imperfect replacement with 1. 
+
+```{r}
+ggplotly(
+  df_annual_neg %>%
+    ggplot(aes(x=annual_crude_rate_10k))+
+    geom_histogram(bins=50, fill=NA, color="black")+
+    geom_vline(xintercept = 0, color="red")+
+    labs(
+      title="Better distribution of annual crude death rates"
+    )
+  )
+```
+
+Because we don't want to remove any counties from representation we will simply add 3 to the `annual_hospital_deaths` values so that the rate remains positive. An ideal solution may have been to perform a more advanced imputation with a glm, but this gets us in the right direction.    
+
+The rows in question with negative values.  
+
+```{r}
+df_annual %>% 
+  filter(annual_crude_rate_10k < 0)
+```
+
+Modifying said rows and displaying the final adjusted calculated variables.    
+
+```{r}
+
+ggplotly(
+  df_annual %>% 
+      ggplot(aes(x=annual_crude_rate_10k))+
+      geom_histogram(bins=50, fill=NA, color="black")+
+      # geom_vline(xintercept = 0, color="red")+
+      labs(
+        title="Final distribution of annual crude death rates"
+      )
+)
+```
+
+# EDA Really
+
+
 
 A boxplot shows the outlier clearly.
 
@@ -175,5 +249,12 @@ df_monthly %>%
 
 
 ## Rates over time
+
+# Notes
+
+* get high/med/low ranges for categorical
+* create another model
+* start presentation
+* try to visualize results
 
 

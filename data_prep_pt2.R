@@ -14,8 +14,8 @@ df_wkday <- bind_rows(OK_all_wkday,
                       TX_all_wkday)
 
 # Replace suppressed ----
-df_monthly[df_monthly == "Suppressed"] <- NA
-df_wkday[df_wkday == "Suppressed"] <- NA  
+df_monthly[df_monthly == "Suppressed"] <- "1"  
+df_wkday[df_wkday == "Suppressed"] <- "1"  
 
 # Create annual  DF ----
 df_annual <- df_monthly %>% 
@@ -23,15 +23,27 @@ df_annual <- df_monthly %>%
     df_monthly %>% 
       group_by(year, state, county, county_code) %>% 
       summarise(annual_covid_hospital_deaths = sum(as.numeric(monthly_covid_hospital_deaths)))
-  ) %>% 
+  ) %>%
   mutate(
     county_code = as.factor(county_code),
     annual_adj_deaths = as.numeric(annual_hospital_deaths) - as.numeric(annual_covid_hospital_deaths),
     annual_crude_rate_10k = annual_adj_deaths/annual_county_population*10000
-    ) %>% view()
-  select(year, state, county, county_code, annual_county_population, annual_adj_deaths, annual_crude_rate_10k) %>%
-  set_colnames(c("year", "state", "county", "county_code", "county_population", "annual_adj_deaths", "annual_crude_rate_10k")) %>%
+    ) %>%
+  ungroup() %>% 
+  select(year, state, county, county_code, annual_county_population, annual_adj_deaths, annual_crude_rate_10k, annual_hospital_deaths, annual_covid_hospital_deaths) %>%
+  set_colnames(c("year", "state", "county", "county_code", "county_population", "annual_adj_deaths", "annual_crude_rate_10k", "annual_hospital_deaths", "annual_covid_hospital_deaths")) %>% 
+  # select(year, state, county, county_code, annual_county_population, annual_adj_deaths, annual_crude_rate_10k) %>%
+  # set_colnames(c("year", "state", "county", "county_code", "county_population", "annual_adj_deaths", "annual_crude_rate_10k")) %>%
   unique()
+
+## Remove negative rates ----
+df_annual <- df_annual %>%
+  mutate(
+    annual_hospital_deaths = ifelse(annual_adj_deaths < 0, as.numeric(annual_hospital_deaths) + 3, annual_hospital_deaths),
+    annual_adj_deaths = ifelse(annual_adj_deaths < 0, as.numeric(annual_hospital_deaths) - as.numeric(annual_covid_hospital_deaths), annual_adj_deaths),
+    annual_crude_rate_10k = ifelse(annual_crude_rate_10k < 0, annual_adj_deaths / county_population * 10000, annual_crude_rate_10k)
+  ) %>% 
+  select(year, state, county, county_code, county_population, annual_adj_deaths, annual_crude_rate_10k)
 
 # Create monthly DF ----
 df_monthly <- df_monthly %>% 
@@ -67,6 +79,6 @@ export_dfs <- function(){
   write_csv(df_annual,  paste0("export2/df_annual.csv"))
 }
 
-# export_dfs()
+export_dfs()
 
 
