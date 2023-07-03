@@ -30,10 +30,16 @@ library(readr)
 library(DT)
 library(plotly)
 library(gridExtra)
+library(tigris)
+library(leaflet)
+library(patchwork)
 
 theme_set(theme_minimal())
 
 rm(list = ls())
+
+tx_counties <- counties(state="TX")
+ok_counties <- counties(state="OK")
 
 df_wkday   <- read_csv("export2/df_wkday.csv")   %>% 
   mutate_if(is.character, as.factor) %>% 
@@ -135,7 +141,7 @@ df_annual %>%
   filter(annual_crude_rate_10k < 0)
 ```
 
-Modifying said rows and displaying the final adjusted calculated variables.    
+Modifying said rows and displaying the final adjusted calculated variables: 
 
 ```{r}
 
@@ -150,107 +156,290 @@ ggplotly(
 )
 ```
 
-# EDA Really
-
-
-
-A boxplot shows the outlier clearly.
+We can also see the distribution remains relatively similar over the years for each state.
 
 ```{r}
-df_annual %>% 
-  ggplot(aes(x=year, y=annual_crude_rate_10k, group=year))+
-  geom_boxplot()+
-  facet_wrap(~state, scales='free_y')
+ggplotly(
+  df_annual %>% 
+      ggplot(aes(x=annual_crude_rate_10k))+
+      geom_histogram(bins=50, fill=NA, color="black")+
+      # geom_vline(xintercept = 0, color="red")+
+      labs(
+        title="Final distribution of annual crude death rates"
+      ) +
+    facet_wrap(~state+year, nrow = 2)
+)
 ```
 
-If we filter out such low populations areas we may negatively impact certain counties. There are a few options: 
 
-* Keep the data as it is (skewed results)
-* Replace values with 1 instead of 5 (less skewed results?)
-* Use the lower value (1) to prevent heavily skewed results (i.e., Loving, TX)
-* Remove all Suppressed values (negative impact?)
-* Impute missing values (MICE, GLM, etc)
+# Map visual
 
-We can see the distributions change subtly for Texas. 
-Also noteworthy is that some adjusted death rates end up negative and may just need reset to a 0 value.
-$$Adjusted Deaths = In Hospital Deaths - COVID Deaths$$
-Annual COVID deaths are calculated by summarising monthly COVID deaths. In some cases these are all very low values, and substituting with all 5's may actually increase the number significantly above the in hospital death count therefore producing a negative number. 
+Initial attempts at visualizing crude death rates over time
 
-```{r fig.height=9}
-g1 <- df_annual %>% 
-  filter(county != "Loving") %>% 
-  ggplot(aes(x=year, y=annual_crude_rate_10k, group=year))+
-  geom_boxplot(outlier.colour = NA)+
-  geom_jitter(alpha=.1, width=.1)+
-  facet_wrap(~state, scales='free_y')+
-  labs(
-    title = "Death rate over time by State",
-    subtitle = "without Loving, TX"
-    )+
-  scale_y_continuous(breaks = seq(0,200,50))
+## Annually {.tabset .pills}
 
-g2 <- df_annual %>% 
-  filter(annual_adj_deaths > 10) %>% 
-  ggplot(aes(x=year, y=annual_crude_rate_10k, group=year))+
-  geom_boxplot(outlier.colour = NA)+
-  geom_jitter(alpha=.1, width=.1)+
-  facet_wrap(~state, scales='free_y')+
-  labs(
-    title = "Death rate over time by State",
-    subtitle = "Adjusted deaths > 10 only",
-    )+
-  scale_y_continuous(breaks = seq(0,200,50))
+We can show that over time the death rates have migrated from one county to another, and that this rate is not correlated to county population. 
 
-grid.arrange(g1,g2)
-```
+Joining the map data with crude death rate per 10k people per county, and then binning those values into 3 equal groups, and plotting them on maps.
 
-# EDA
+### OK {.tabset .pills}
 
-* How have death rates changed over time for each state?
-    * by year
-    * by month-year
-
-## Annual
-
-Overall rates seem to have dropped off over time. 
+Starting with Oklahoma
 
 ```{r}
-df_annual %>% 
-  filter(annual_crude_rate_10k < 750) %>% 
-  mutate(annual_crude_rate_10k = ifelse(annual_crude_rate_10k < 1, 0, annual_crude_rate_10k)) %>% 
-  ggplot(aes(x=year, y=annual_crude_rate_10k, group=year))+
-  geom_boxplot()+
-  facet_wrap(~state)
+# Annual map data ----
+## Oklahoma ----
+
+# join crude rates with map data
+df_ok_2021 <- ok_counties %>% 
+  left_join(
+    df_annual %>% 
+      filter(year == '2021' & state == 'OK') %>% 
+      select(county, county_code, annual_crude_rate_10k) %>% 
+      mutate(county_code = as.character(county_code),
+             county = as.character(county)) %>% 
+      set_colnames(c("NAME", "GEOID", "rate"))
+  )
+df_ok_2020 <- ok_counties %>% 
+  left_join(
+    df_annual %>% 
+      filter(year == '2020' & state == 'OK') %>% 
+      select(county, county_code, annual_crude_rate_10k) %>% 
+      mutate(county_code = as.character(county_code),
+             county = as.character(county)) %>% 
+      set_colnames(c("NAME", "GEOID", "rate"))
+  )
+df_ok_2019 <- ok_counties %>% 
+  left_join(
+    df_annual %>% 
+      filter(year == '2019' & state == 'OK') %>% 
+      select(county, county_code, annual_crude_rate_10k) %>% 
+      mutate(county_code = as.character(county_code),
+             county = as.character(county)) %>% 
+      set_colnames(c("NAME", "GEOID", "rate"))
+  )
+df_ok_2018 <- ok_counties %>% 
+  left_join(
+    df_annual %>% 
+      filter(year == '2018' & state == 'OK') %>% 
+      select(county, county_code, annual_crude_rate_10k) %>% 
+      mutate(county_code = as.character(county_code),
+             county = as.character(county)) %>% 
+      set_colnames(c("NAME", "GEOID", "rate"))
+  )
+
+# divide into equal groups by rate
+df_ok_2021$group <- as.factor(cut_number(df_ok_2021$rate, 3))
+df_ok_2020$group <- as.factor(cut_number(df_ok_2020$rate, 3))
+df_ok_2019$group <- as.factor(cut_number(df_ok_2019$rate, 3))
+df_ok_2018$group <- as.factor(cut_number(df_ok_2018$rate, 3))
+
+# make plots
+gg_ok_2021 <- df_ok_2021 %>% 
+  ggplot(aes(fill=group))+
+  geom_sf() + 
+  theme_void() + 
+  scale_fill_manual(values=c("#FCE8B2", "#FFB74D", "#E65100"))+
+  ggtitle('2021')
+gg_ok_2020 <- df_ok_2020 %>% 
+  ggplot(aes(fill=group))+
+  geom_sf() + 
+  theme_void() + 
+  scale_fill_manual(values=c("#FCE8B2", "#FFB74D", "#E65100"))+
+  ggtitle('2020')
+gg_ok_2019 <- df_ok_2019 %>% 
+  ggplot(aes(fill=group))+
+  geom_sf() + 
+  theme_void() + 
+  scale_fill_manual(values=c("#FCE8B2", "#FFB74D", "#E65100"))+
+  ggtitle('2019')
+gg_ok_2018 <- df_ok_2018 %>% 
+  ggplot(aes(fill=group))+
+  geom_sf() + 
+  theme_void() + 
+  scale_fill_manual(values=c("#FCE8B2", "#FFB74D", "#E65100"))+
+  ggtitle('2018')
+
+# populations
+df_ok_2021_pop <- ok_counties %>% 
+  left_join(
+    df_annual %>% 
+      filter(year == '2021' & state == 'OK') %>% 
+      select(county, county_code, county_population) %>% 
+      mutate(county_code = as.character(county_code),
+             county = as.character(county)) %>% 
+      set_colnames(c("NAME", "GEOID", "population"))
+  )
+
+df_ok_2021_pop$group <- as.factor(cut_number(df_ok_2021_pop$population/1000, 3))
+
+gg_ok_2021_pop <- df_ok_2021_pop %>% 
+  ggplot(aes(fill=group))+
+  geom_sf() + 
+  theme_void() + 
+  scale_fill_manual(values=c("#FCE8B2", "#FFB74D", "#E65100"))+
+  ggtitle('2021 Population')
 
 ```
 
-## Monthly
+#### Population
+
+```{r}
+gg_ok_2021_pop
+```
+
+#### 2021
+
+```{r}
+gg_ok_2021
+```
+
+#### 2020
+
+```{r}
+gg_ok_2020
+```
+
+#### 2019
+
+```{r}
+gg_ok_2019
+```
+
+#### 2018
+
+```{r}
+gg_ok_2018
+```
+
+### TX {.tabset .pills}
+
+It's actually quite clear that more rural areas in texas are suffering from a higher crude death rate.  
 
 ```{r}
 
-df_monthly %>% 
-  group_by(year, month, state) %>% 
-  summarise(crude_mean = mean(monthly_crude_rate_10k)) %>% 
-  mutate(date = ymd(paste0(as.character(year), "-", as.character(month), "-01"))) %>% 
-  ggplot(aes(x=date, y=crude_mean, group=year))+
-  geom_boxplot(outlier.colour = NA)+
-  geom_jitter(alpha=.4, width=.04)+
-  facet_wrap(~state)
+# join crude rates with map data
+df_tx_2021 <- tx_counties %>% 
+  left_join(
+    df_annual %>% 
+      filter(year == '2021' & state == 'TX') %>% 
+      select(county, county_code, annual_crude_rate_10k) %>% 
+      mutate(county_code = as.character(county_code),
+             county = as.character(county)) %>% 
+      set_colnames(c("NAME", "GEOID", "rate"))
+  )
+df_tx_2020 <- tx_counties %>% 
+  left_join(
+    df_annual %>% 
+      filter(year == '2020' & state == 'TX') %>% 
+      select(county, county_code, annual_crude_rate_10k) %>% 
+      mutate(county_code = as.character(county_code),
+             county = as.character(county)) %>% 
+      set_colnames(c("NAME", "GEOID", "rate"))
+  )
+df_tx_2019 <- tx_counties %>% 
+  left_join(
+    df_annual %>% 
+      filter(year == '2019' & state == 'TX') %>% 
+      select(county, county_code, annual_crude_rate_10k) %>% 
+      mutate(county_code = as.character(county_code),
+             county = as.character(county)) %>% 
+      set_colnames(c("NAME", "GEOID", "rate"))
+  )
+df_tx_2018 <- tx_counties %>% 
+  left_join(
+    df_annual %>% 
+      filter(year == '2018' & state == 'TX') %>% 
+      select(county, county_code, annual_crude_rate_10k) %>% 
+      mutate(county_code = as.character(county_code),
+             county = as.character(county)) %>% 
+      set_colnames(c("NAME", "GEOID", "rate"))
+  )
 
-df_monthly %>% 
-  filter(state == "OK") %>% 
-  filter(monthly_crude_rate_10k < 750) %>% 
-  ggplot(aes(x=date, y=monthly_crude_rate_10k, group=county))+
-  geom_point()+
-  geom_line(aes(group=county))+
-  facet_wrap(~county)
+# divide into equal groups by rate
+df_tx_2021$group <- as.factor(cut_number(df_tx_2021$rate, 3))
+df_tx_2020$group <- as.factor(cut_number(df_tx_2020$rate, 3))
+df_tx_2019$group <- as.factor(cut_number(df_tx_2019$rate, 3))
+df_tx_2018$group <- as.factor(cut_number(df_tx_2018$rate, 3))
 
+# make plots
+gg_tx_2021 <- df_tx_2021 %>% 
+  ggplot(aes(fill=group))+
+  geom_sf() + 
+  theme_void() + 
+  scale_fill_manual(values=c("#FCE8B2", "#FFB74D", "#E65100"))+
+  ggtitle('2021')
+gg_tx_2020 <- df_tx_2020 %>% 
+  ggplot(aes(fill=group))+
+  geom_sf() + 
+  theme_void() + 
+  scale_fill_manual(values=c("#FCE8B2", "#FFB74D", "#E65100"))+
+  ggtitle('2020')
+gg_tx_2019 <- df_tx_2019 %>% 
+  ggplot(aes(fill=group))+
+  geom_sf() + 
+  theme_void() + 
+  scale_fill_manual(values=c("#FCE8B2", "#FFB74D", "#E65100"))+
+  ggtitle('2019')
+gg_tx_2018 <- df_tx_2018 %>% 
+  ggplot(aes(fill=group))+
+  geom_sf() + 
+  theme_void() + 
+  scale_fill_manual(values=c("#FCE8B2", "#FFB74D", "#E65100"))+
+  ggtitle('2018')
+
+df_tx_2021_pop <- tx_counties %>% 
+  left_join(
+    df_annual %>% 
+      filter(year == '2021' & state == 'TX') %>% 
+      select(county, county_code, county_population) %>% 
+      mutate(county_code = as.character(county_code),
+             county = as.character(county)) %>% 
+      set_colnames(c("NAME", "GEOID", "population"))
+  )
+
+df_tx_2021_pop$group <- as.factor(cut_number(df_tx_2021_pop$population, 3, labels=FALSE))
+
+gg_tx_2021_pop <- df_tx_2021_pop %>% 
+  ggplot(aes(fill=group))+
+  geom_sf() + 
+  theme_void() + 
+  scale_fill_manual(values=c("#FCE8B2", "#FFB74D", "#E65100"))+
+  ggtitle('2021 Population')
+```
+
+#### Population
+
+```{r}
+gg_tx_2021_pop
+```
+
+#### 2021
+
+```{r}
+gg_tx_2021
+```
+
+#### 2020
+
+```{r}
+gg_tx_2020
+```
+
+#### 2019
+
+```{r}
+gg_tx_2019
+```
+
+#### 2018
+
+```{r}
+gg_tx_2018
 ```
 
 
-## Rates over time
 
-# Notes
 
 * get high/med/low ranges for categorical
 * create another model
