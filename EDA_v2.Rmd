@@ -21,7 +21,8 @@ output:
 knitr::opts_chunk$set(echo    = TRUE,
                       error   = FALSE,
                       message = FALSE,
-                      warning = FALSE)
+                      warning = FALSE,
+                      cache   = TRUE)
 
 library(tidyverse)
 library(janitor)
@@ -172,17 +173,15 @@ ggplotly(
 ```
 
 
-# Map visual
+# Annually {.tabset .pills}
 
 Initial attempts at visualizing crude death rates over time
-
-## Annually {.tabset .pills}
 
 We can show that over time the death rates have migrated from one county to another, and that this rate is not correlated to county population. 
 
 Joining the map data with crude death rate per 10k people per county, and then binning those values into 3 equal groups, and plotting them on maps.
 
-### OK {.tabset .pills}
+## OK {.tabset .pills}
 
 Starting with Oklahoma
 
@@ -282,37 +281,46 @@ gg_ok_2021_pop <- df_ok_2021_pop %>%
 
 ```
 
-#### Population
+### Population
 
 ```{r}
 gg_ok_2021_pop
 ```
 
-#### 2021
+### 2021
 
 ```{r}
 gg_ok_2021
 ```
 
-#### 2020
+### 2020
 
 ```{r}
 gg_ok_2020
 ```
 
-#### 2019
+### 2019
 
 ```{r}
 gg_ok_2019
 ```
 
-#### 2018
+### 2018
 
 ```{r}
 gg_ok_2018
 ```
 
-### TX {.tabset .pills}
+### Table
+
+Data in table format. 
+
+```{r}
+df_annual %>% filter(state == 'OK') %>% datatable()
+  
+```
+
+## TX {.tabset .pills}
 
 It's actually quite clear that more rural areas in texas are suffering from a higher crude death rate.  
 
@@ -398,7 +406,7 @@ df_tx_2021_pop <- tx_counties %>%
       set_colnames(c("NAME", "GEOID", "population"))
   )
 
-df_tx_2021_pop$group <- as.factor(cut_number(df_tx_2021_pop$population, 3, labels=FALSE))
+df_tx_2021_pop$group <- cut_number(df_tx_2021_pop$population/1000, 3)
 
 gg_tx_2021_pop <- df_tx_2021_pop %>% 
   ggplot(aes(fill=group))+
@@ -408,42 +416,152 @@ gg_tx_2021_pop <- df_tx_2021_pop %>%
   ggtitle('2021 Population')
 ```
 
-#### Population
+### Population
 
 ```{r}
 gg_tx_2021_pop
 ```
 
-#### 2021
+### 2021
 
 ```{r}
 gg_tx_2021
 ```
 
-#### 2020
+### 2020
 
 ```{r}
 gg_tx_2020
 ```
 
-#### 2019
+### 2019
 
 ```{r}
 gg_tx_2019
 ```
 
-#### 2018
+### 2018
 
 ```{r}
 gg_tx_2018
 ```
 
+### Table
+
+Data in table format. 
+
+```{r}
+df_annual %>% filter(state == 'TX') %>% datatable()
+  
+```
+
+# Monthly
+
+Visualizing monthly data in map format over 12 months would be visually messy so we can display just a few counties of interest and show how they have changed over the months for the year 2021.  
+
+## OK
+
+We can start by focusing on counties with medium or higher death rates. This is done by taking the mean death rate for the year 2021 and taking the top counties. 
+
+```{r}
+# top counties to plot
+num_counties = 16
+
+# join with populations
+df_a <- df_monthly %>% 
+  filter(state == "OK" & year == "2021") %>% 
+  left_join(df_annual %>% select(county_code, year, county_population)) %>% 
+  select(date, county, county_code, county_population, monthly_crude_rate_10k)
+
+# get mean death rate per county for later filtering
+top_OK <- df_a %>% 
+  group_by(county) %>% 
+  summarise(mean_rate = mean(monthly_crude_rate_10k)) %>% 
+  arrange(-mean_rate) %>% 
+  slice(1:num_counties)
+
+top_OK
+```
+
+We can then add some color coding representing high, medium, and low death rates and then plot how each county is impacted over time.    
+
+```{r}
+# group based on annual death rate
+df_monthly$groups <- cut_number(df_monthly$monthly_crude_rate_10k, 3)
+# df_annualtop_10_OK$groups <- cut_number(df_annual$annual_crude_rate_10k, 3)
+
+# join to counties
+# df_a <- df_a %>% left_join(df_annual)
+df_a <- df_a %>% left_join(df_monthly)
+
+df_a <- df_a %>% 
+  mutate(group = as.factor(case_when(
+    groups == levels(df_a$groups)[1] ~ "low",
+    groups == levels(df_a$groups)[2] ~ "med",
+    groups == levels(df_a$groups)[3] ~ "high"
+  )))
+
+df_a %>% 
+  filter(county %in% top_OK$county) %>% 
+  ggplot(aes(x=date, y=monthly_crude_rate_10k, group=county, fill=group, color=group)) +
+  geom_line()+
+  geom_point()+
+  ggtitle("Crude death rate 2021, OK") +
+  scale_x_date(date_breaks = "3 months", date_labels =  "%b") +
+  facet_wrap(~county)
+```
+
+## TX
+
+We can start by focusing on counties with medium or higher death rates. This is done by taking the mean death rate for the year 2021 and taking the top counties. 
+
+```{r}
+# join with populations
+df_b <- df_monthly %>% 
+  filter(state == "TX" & year == "2021") %>% 
+  left_join(df_annual %>% select(county_code, year, county_population)) %>% 
+  select(date, county, county_code, county_population, monthly_crude_rate_10k)
+
+# get mean death rate per county for later filtering
+top_TX <- df_b %>% 
+  group_by(county) %>% 
+  summarise(mean_rate = mean(monthly_crude_rate_10k)) %>% 
+  arrange(-mean_rate) %>% 
+  filter(county != "Loving") %>%  # remove outlier
+  slice(1:num_counties)
+
+top_TX
+```
+
+We can then add some color coding representing high, medium, and low death rates and then plot how each county is impacted over time.    
+
+```{r}
+# group based on annual death rate
+df_monthly$groups <- cut_number(df_monthly$monthly_crude_rate_10k, 3)
+# df_annualtop_10_OK$groups <- cut_number(df_annual$annual_crude_rate_10k, 3)
+
+# join to counties
+# df_b<- df_b%>% left_join(df_annual)
+df_b <- df_b %>% left_join(df_monthly)
+
+df_b <- df_b%>% 
+  mutate(group = as.factor(case_when(
+    groups == levels(df_b$groups)[1] ~ "low",
+    groups == levels(df_b$groups)[2] ~ "med",
+    groups == levels(df_b$groups)[3] ~ "high"
+  )))
+
+df_b %>% 
+  filter(county %in% top_TX$county) %>% 
+  ggplot(aes(x=date, y=monthly_crude_rate_10k, group=county, fill=group, color=group)) +
+  geom_line()+
+  geom_point()+
+  ggtitle("Crude death rate 2021, TX") +
+  scale_x_date(date_breaks = "3 months", date_labels =  "%b") +
+  theme(axis.text.x=element_text(angle=60, hjust=1))+
+  facet_wrap(~county)
+```
 
 
-
-* get high/med/low ranges for categorical
-* create another model
-* start presentation
-* try to visualize results
 
 

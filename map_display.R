@@ -179,34 +179,53 @@ options(scipen = 999)
 ggplot(tx_projected) + 
   geom_sf()
 
-# testing ----
+# testing LEAFLET ----
+library(tigris)
+library(leaflet)
+tx_counties <- counties(state="TX")
+ok_counties <- counties(state="OK")
+counties <- bind_rows(tx_counties, ok_counties)
+
 ## OK ----
 ok_test <- ok_counties %>% 
   # select(GEOID, geometry) %>% 
   left_join(
     df_annual %>% 
       filter(year == '2021' & state == 'OK') %>% 
-      select(county, county_code, annual_crude_rate_10k) %>% 
+      select(county, county_code, annual_crude_rate_10k, county_population) %>% 
       mutate(county_code = as.character(county_code),
-             county = as.character(county)) %>% 
-      set_colnames(c("NAME", "GEOID", "rate"))
+             county = as.character(county),
+             annual_crude_rate_10k = round(annual_crude_rate_10k, digits=1)) %>% 
+      set_colnames(c("NAME", "GEOID", "rate", "population"))
   )
 
 # ggplot(ok_test, aes(fill = rate)) + 
 #   geom_sf()
 
 # try leaflet
-pal_ok <- colorNumeric("Greens", domain=ok_test$rate)
-popup <- paste0(paste0("<strong>", ok_test$NAME, "</strong><br/>Rate: ", ok_test$rate))
+# pal_ok <- colorNumeric("Greens", domain=ok_test$rate)
+# pal_ok <- colorNumeric(c("yellow", "orange", "red"), domain=ok_test$rate)
+# pal_ok <- colorNumeric('plasma', domain=ok_test$rate)
+# pal_ok <- colorQuantile(c("yellow", "orange", "red"), 
+#                         domain=as.numeric(tx_test$rate),
+#                         n=3)
+pal_ok <- colorQuantile(palette = "plasma",
+                        domain=as.numeric(ok_test$rate),
+                        n=3)
+
+popup <- paste0(paste0("<strong>", ok_test$NAME, 
+                       "</strong><br/>Rate: ", ok_test$rate,
+                       "</strong><br/>Population: ", format(ok_test$population, big.mark=",", scientific=FALSE)))
 
 leaflet() %>%
   addProviderTiles("CartoDB.Positron") %>% 
   addPolygons(data = ok_test, 
               fillColor = ~pal_ok(ok_test$rate),
-              fillOpacity = 0.9, 
-              weight = 0.2, 
-              smoothFactor = 0.2,
-              popup = ~popup) %>% 
+              fillOpacity = 0.8, 
+              weight = .8, 
+              # smoothFactor = 0.2,
+              popup = ~popup,
+              highlightOptions = highlightOptions(color = "white", weight = 5, bringToFront = TRUE)) %>% 
   addLegend(pal = pal_ok, 
             values = ok_test$rate,
             position = "bottomright", 
@@ -218,22 +237,27 @@ tx_test <- tx_counties %>%
   left_join(
     df_annual %>% 
       filter(year == '2021' & state == 'TX') %>% 
-      select(county, county_code, annual_crude_rate_10k) %>% 
+      select(county, county_code, annual_crude_rate_10k, county_population) %>% 
       mutate(county_code = as.character(county_code),
              county = as.character(county),
              annual_crude_rate_10k = round(annual_crude_rate_10k, digits=1)) %>% 
-      set_colnames(c("NAME", "GEOID", "rate"))
+      set_colnames(c("NAME", "GEOID", "rate", "population"))
   )
 ggplot(tx_test, aes(fill = rate)) + 
   geom_sf()
 
 library(viridis)
-pal_tx <- colorNumeric("viridis", domain=as.numeric(tx_test$rate))
-pal_tx <- colorQuantile(palette = "magma", 
+# pal_tx <- colorNumeric("viridis", domain=as.numeric(tx_test$rate))
+pal_tx <- colorQuantile(c("yellow", "orange", "red"), 
                         domain=as.numeric(tx_test$rate),
-                        n=5)
+                        n=3)
+pal_tx <- colorQuantile(palette = "plasma",
+                        domain=as.numeric(tx_test$rate),
+                        n=3)
 
-popup <- paste0(paste0("<strong>", tx_test$NAME, "</strong><br/>Rate: ", tx_test$rate))
+popup <- paste0(paste0("<strong>", tx_test$NAME, 
+                       "</strong><br/>Rate: ", tx_test$rate,
+                       "</strong><br/>Population: ", format(tx_test$population, big.mark=",", scientific=FALSE)))
 
 # popup_sb <- paste0("<strong>", states_merged_sb_pc$NAME, 
 #                    "</strong><br />Total: ", states_merged_sb_pc$total,
