@@ -248,12 +248,12 @@ ggplot(tx_test, aes(fill = rate)) +
 
 library(viridis)
 # pal_tx <- colorNumeric("viridis", domain=as.numeric(tx_test$rate))
-pal_tx <- colorQuantile(c("yellow", "orange", "red"), 
+pal_tx <- colorQuantile(c("yellow", "orange", "red"),
                         domain=as.numeric(tx_test$rate),
                         n=3)
-pal_tx <- colorQuantile(palette = "plasma",
-                        domain=as.numeric(tx_test$rate),
-                        n=3)
+# pal_tx <- colorQuantile(palette = "plasma",
+#                         domain=as.numeric(tx_test$rate),
+#                         n=3)
 
 popup <- paste0(paste0("<strong>", tx_test$NAME, 
                        "</strong><br/>Rate: ", tx_test$rate,

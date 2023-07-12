@@ -77,6 +77,7 @@ export_dfs <- function(){
   write_csv(df_wkday,   paste0("export2/df_wkday.csv"))
   write_csv(df_monthly, paste0("export2/df_monthly.csv"))
   write_csv(df_annual,  paste0("export2/df_annual.csv"))
+  write_csv(county_pop, paste0("export2/df_county_pop.csv"))
 }
 
 export_dfs()

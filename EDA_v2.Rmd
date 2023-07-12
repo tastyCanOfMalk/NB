@@ -96,7 +96,7 @@ Early on in EDA it became evident that some replaced `Suppressed` values were sk
 df_annual_5 %>%
   select(state, county, county_population, annual_adj_deaths, annual_crude_rate_10k) %>%
   arrange(-annual_crude_rate_10k) %>% 
-  slice(1:100)
+  slice(1:5)
 ```
 
 ### Histogram
@@ -508,6 +508,7 @@ df_a %>%
   geom_point()+
   ggtitle("Crude death rate 2021, OK") +
   scale_x_date(date_breaks = "3 months", date_labels =  "%b") +
+  theme(axis.text.x=element_text(angle=60, hjust=1))+
   facet_wrap(~county)
 ```
 
